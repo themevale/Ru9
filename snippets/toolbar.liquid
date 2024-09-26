@@ -1,0 +1,93 @@
+{%- liquid
+  assign show_selectors = false
+  assign currency_selector = false
+  assign locale_selector = false
+
+  if section.settings.show_currency_selector and shop.enabled_currencies.size > 1
+    assign currency_selector = true
+  endif
+
+  if section.settings.show_locale_selector and shop.enabled_locales.size > 1
+    assign locale_selector = true
+  endif
+
+  if currency_selector or locale_selector
+    assign show_selectors = true
+  endif
+-%}
+
+<div class="toolbar{% if overlay_header%} toolbar--transparent{% endif %}">
+  <div
+    class="page-width"
+    style="{% if section.settings.section_width != 'page-width' %}--page-width: {{ page_width }}{% endif %}"
+  >
+    <div class="toolbar__content flex ai-center jc-end gap-x">
+      {%- if section.settings.toolbar_menu != blank -%}
+        <div class="toolbar__item toolbar__item--menu">
+          <ul class="inline-list toolbar__menu small--jc-center">
+            {%- for link in toolbar_menu.links -%}
+              <li>
+                <a href="{{ link.url }}">{{ link.title }}</a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+
+      {%- if settings.search_enable -%}
+        <div class="toolbar__search small--hide">
+          <a
+            href="{{ routes.search_url }}"
+            class="toolbar__search-link toolbar__search-link--icon js-search-header flex gap-x-xs"
+          >
+            {% render 'icon-search' %}
+            <span class="icon__text">{{ 'general.search.title' | t }}</span>
+          </a>
+        </div>
+      {%- endif -%}
+
+      {% if section.settings.show_lang %}
+        <div class="toolbar__lang small--hide">
+          {%- render 'multi-selectors', locale_selector: section.settings.show_lang, location: 'toolbar' -%}
+        </div>
+        {% comment %}
+          <div class="lang-switcher flex ai-center f-smb small--hide">
+            {% render 'icon-global' %}
+            <span
+              data-ly-code="vi"
+              {% if request.locale.iso_code == 'vi' %}
+                class="active"
+              {% endif %}
+              >VN</span
+            >
+            /
+            <span
+              {% if request.locale.iso_code != 'vi' %}
+                class="active"
+              {% endif %}
+              data-ly-code="en"
+              >EN</span
+            >
+          </div>
+        {% endcomment %}
+      {% endif %}
+
+      {%- if section.settings.toolbar_social -%}
+        <div class="toolbar__item">
+          {% render 'social-icons', additional_classes: 'inline-list toolbar__social' %}
+        </div>
+      {%- endif -%}
+
+      {%- if show_selectors -%}
+        <div class="toolbar__item">
+          {%- render 'multi-selectors',
+            locale_selector: locale_selector,
+            currency_selector: currency_selector,
+            show_currency_flags: section.settings.show_currency_flags,
+            location: 'toolbar'
+          -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>

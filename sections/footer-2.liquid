@@ -1,0 +1,378 @@
+{{ 'footer.css' | asset_url | stylesheet_tag: preload: true }}
+<div class="footer-container relative">
+  <div class="footer-content w-full relative page-width">
+    <div class="footer-copyright__image">
+      {%- capture sizes -%}{{ section.settings.footer_logo.width }}px{%- endcapture -%}
+      {%- capture widths -%}{{ section.settings.footer_logo.width }}, {{ section.settings.footer_logo.width | times: 2 }}{%- endcapture -%}
+
+      <a href="https://ru9.vn/">
+        {%-
+          render 'image-element',
+          img: section.settings.footer_logo,
+          img_width: section.settings.footer_logo.width,
+          img_height: section.settings.footer_logo.height,
+          sizes: sizes,
+          widths: widths,
+          classes: 'footer-logo-image',
+          loading: 'eager',
+          alt: section.settings.footer_logo.alt | default: shop.name,
+          itemprop: 'logo',
+        -%}
+      </a>
+    </div>
+    <div class="footer-top footer-block-spacing">
+      <div class="footer-navigate">
+        <div class="footer-left">
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'newsletter' %}
+                <!-- Footer Newsletter -->
+                <div class="footer-navigate__item footer-newsletter">
+                  <!-- Footer Newsletter Join -->
+                  <div class="footer-newsletter__new">
+                    <div class="footer-navigate__title f-sbm text-xl">Join Newsletter</div>
+                    <div class="footer-newsletter_form">
+                      <!-- Form Contact -->
+                      {% assign form_id = 'contact-' | append: section.id %}
+                      {% form 'contact', id: form_id, class: 'newsletter-form' %}
+                        {% if form.posted_successfully? %}
+                          <div class="newsletter-form__success">
+                            {{ 'contact.form.post_success' | t }}
+                          </div>
+                        {% endif %}
+
+                        {{ form.errors | default_errors }}
+                        <div class="newsletter-form__group flex jc-between ai-center">
+                          <input
+                            type="email"
+                            id="ContactFormName-{{ section.id }}"
+                            class="newsletter-form__input"
+                            name="contact[email]"
+                            autocorrect="off"
+                            autocapitalize="off"
+                            value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                            placeholder="your@email.com"
+                          >
+                          <span id="Form-Newsletter-{{ section.id }}" class="newsletter-form__icon">
+                            {% render 'icon-fly' %}
+                          </span>
+                        </div>
+                      {% endform %}
+                      <!-- End Form Contact -->
+                    </div>
+                  </div>
+                  <!-- End Footer Newsletter Join -->
+                  {% for block in section.blocks %}
+                    {% case block.type %}
+                      {% when 'follow-us' %}
+                        <!-- Footer Newsletter Follow -->
+                        <div class="footer-newsletter__follow hidden-mobile">
+                          <div class="footer-navigate__title f-sbm text-xl">Follow Us</div>
+                          <!-- Icon, FB - IG - Twitter -->
+                          <div class="footer-follow flex jc-start">
+                            {% if settings.social_facebook_link != blank %}
+                              <a href="{{ settings.social_facebook_link }}" class="footer-follow__item">
+                                {% render 'icon-facebook' %}
+                              </a>
+                            {% endif %}
+                            {% if settings.social_instagram_link != blank %}
+                              <a href="{{ settings.social_instagram_link }}" class="footer-follow__item">
+                                {% render 'icon-instagram' %}
+                              </a>
+                            {% endif %}
+                            {% if settings.social_twitter_link != blank %}
+                              <a href="{{ settings.social_twitter_link }}" class="footer-follow__item">
+                                {% render 'icon-twitter' %}
+                              </a>
+                            {% endif %}
+                            {%- if settings.social_youtube_link != blank -%}
+                              <a href="{{ settings.social_youtube_link }}" class="footer-follow__item">
+                                {% render 'icon-youtube' %}
+                              </a>
+                            {% endif %}
+                            {% if settings.social_zalo_link != blank %}
+                              <a href="{{ settings.social_zalo_link }}" class="footer-follow__item">
+                                {% render 'icon-zalo' %}
+                              </a>
+                            {% endif %}
+                          </div>
+                          <!-- End Icon, FB - IG - Twitter -->
+                        </div>
+                        <!-- End Footer Newsletter Follow -->
+                      {% else %}
+
+                    {% endcase %}
+                  {% endfor %}
+                </div>
+                <!-- End Footer Newsletter -->
+              {% when 'navigate' %}
+                <div class="footer-navigate__item footer-nav">
+                  <div class="footer-navigate__title f-sbm text-xl">
+                    {{ block.settings.title }}
+                  </div>
+                  <div class="footer-navigate__menu">
+                    {{ block.settings.text }}
+                  </div>
+                </div>
+
+              {% when 'follow-us' %}
+                <!-- Footer Newsletter Follow -->
+                <div class="footer-navigate__item footer-navigate__follow hidden-desktop">
+                  <div class="footer-navigate__title f-sbm text-xl">Follow Us</div>
+                  <!-- Icon, FB - IG - Twitter -->
+                  <div class="footer-follow flex jc-start">
+                    {% if settings.social_facebook_link != blank %}
+                      <a href="{{ settings.social_facebook_link }}" class="footer-follow__item">
+                        {% render 'icon-facebook' %}
+                      </a>
+                    {% endif %}
+                    {% if settings.social_instagram_link != blank %}
+                      <a href="{{ settings.social_instagram_link }}" class="footer-follow__item">
+                        {% render 'icon-instagram' %}
+                      </a>
+                    {% endif %}
+                    {% if settings.social_twitter_link != blank %}
+                      <a href="{{ settings.social_twitter_link }}" class="footer-follow__item">
+                        {% render 'icon-twitter' %}
+                      </a>
+                    {% endif %}
+                    {%- if settings.social_youtube_link != blank -%}
+                      <a href="{{ settings.social_youtube_link }}" class="footer-follow__item">
+                        {% render 'icon-youtube' %}
+                      </a>
+                    {% endif %}
+                    {% if settings.social_zalo_link != blank %}
+                      <a href="{{ settings.social_zalo_link }}" class="footer-follow__item">
+                        {% render 'icon-zalo' %}
+                      </a>
+                    {% endif %}
+                  </div>
+                  <!-- End Icon, FB - IG - Twitter -->
+                </div>
+                <!-- End Footer Newsletter Follow -->
+
+              {% else %}
+
+            {% endcase %}
+          {% endfor %}
+        </div>
+        <div class="footer-right w-full">
+          <div class="footer-navigate__item footer-company">
+            <div class="footer-navigate__title f-bold text-xl">
+              {{ section.settings.company_name }}
+            </div>
+            <div class="footer-navigate__menu">
+              <!-- Footer Newsletter Follow -->
+              <div class="footer-newsletter__follow">
+                {% render 'footer-newsletter' %}
+                <!-- Icon, FB - IG - Twitter -->
+                <div class="footer-follow flex jc-start">
+                  {% if settings.social_facebook_link != blank %}
+                    <a href="{{ settings.social_facebook_link }}" class="footer-follow__item">
+                      {% render 'icon-facebook' %}
+                    </a>
+                  {% endif %}
+                  {% if settings.social_instagram_link != blank %}
+                    <a href="{{ settings.social_instagram_link }}" class="footer-follow__item">
+                      {% render 'icon-instagram' %}
+                    </a>
+                  {% endif %}
+                  {% if settings.social_twitter_link != blank %}
+                    <a href="{{ settings.social_twitter_link }}" class="footer-follow__item">
+                      {% render 'icon-twitter' %}
+                    </a>
+                  {% endif %}
+                  {%- if settings.social_youtube_link != blank -%}
+                    <a href="{{ settings.social_youtube_link }}" class="footer-follow__item">
+                      {% render 'icon-youtube' %}
+                    </a>
+                  {% endif %}
+                  {% if settings.social_zalo_link != blank %}
+                    <a href="{{ settings.social_zalo_link }}" class="footer-follow__item">
+                      {% render 'icon-zalo' %}
+                    </a>
+                  {% endif %}
+                </div>
+                <!-- End Icon, FB - IG - Twitter -->
+              </div>
+              <!-- End Footer Newsletter Follow -->
+              <div class="footer-newsletter__info">
+                {{ section.settings.info }}
+              </div>
+              {% if section.settings.dmca_logo %}
+                <div class="footer-newsletter__dmca">
+                  {%- render 'image-element', img: section.settings.dmca_logo, loading: 'lazy' -%}
+                </div>
+              {% endif %}
+              <div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {%- if section.settings.member_text != blank or section.settings.member_logo != blank -%}
+      <div class="footer-member footer-block-spacing text-center c-white f-bold">
+        {%- if section.settings.member_text != blank -%}
+          <div class="rte">
+            {{ section.settings.member_text }}
+          </div>
+        {%- endif -%}
+        {%- if section.settings.member_logo != blank -%}
+            <{% if section.settings.member_link != blank %}a href="{{ section.settings.member_link }}"{% else %}div{% endif %} class="footer-member__logo">
+                {%- render 'image-element',
+                img: section.settings.member_logo,
+                img_width: section.settings.member_logo.width,
+                img_height: section.settings.member_logo.height,
+                loading: 'lazy'
+                -%}
+            </{% if section.settings.member_link != blank %}a{% else %}div{% endif %}>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+    <div class="footer-bottom footer-block-spacing">
+      <div class="footer__payment">
+        <span class="visually-hidden">{{ 'sections.footer.payment' | t }}</span>
+        <ul class="list list-payment" role="list">
+          {%- for type in shop.enabled_payment_types -%}
+            <li class="list-payment__item">
+              {{
+                type
+                | payment_type_svg_tag: class: 'icon icon--full-color'
+                | replace: 'width=', 'data-width='
+                | replace: 'height=', 'data-height'
+              }}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+      <div class="footer__copyright flex ai-center jc-between">
+        <div class="footer__copyright-content">
+          {% if section.settings.copyright_text != '' -%}
+            <small class="copyright__content">{{ section.settings.copyright_text }}</small>
+          {% else -%}
+            <small class="copyright__content"
+              >&copy; {{ 'now' | date: '%Y' }}, {{ shop.name | link_to: routes.root_url -}}
+            </small>
+            <small class="copyright__content">{{ powered_by_link }}</small>
+          {% endif %}
+        </div>
+        {%- if section.settings.copyright_logo != blank -%}
+          {%- render 'image-element',
+            img: section.settings.copyright_logo,
+            img_width: section.settings.copyright_logo.width,
+            img_height: section.settings.copyright_logo.height,
+            loading: 'lazy'
+          -%}
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Footer 2",
+  "disabled_on": {
+    "groups": ["header", "custom.popups"]
+  },
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "footer_logo",
+      "label": "t:sections.header.blocks.logo.settings.logo.label"
+    },
+    {
+      "type": "header",
+      "content": "Copyright"
+    },
+    {
+      "type": "text",
+      "id": "copyright_text",
+      "label": "Copyright text",
+      "default": "Ru9 © Copyright 2022"
+    },
+    {
+      "type": "richtext",
+      "id": "copyright_right",
+      "label": "Copyright link right"
+    },
+    {
+      "type": "image_picker",
+      "id": "copyright_logo",
+      "label": "t:sections.header.blocks.logo.settings.logo.label"
+    },
+    {
+      "type": "header",
+      "content": "Company Info"
+    },
+    {
+      "type": "text",
+      "id": "company_name",
+      "label": "Title "
+    },
+    {
+      "type": "html",
+      "id": "info",
+      "label": "Info"
+    },
+    {
+      "type": "image_picker",
+      "label": "DMCA logo",
+      "id": "dmca_logo"
+    },
+    {
+      "type": "header",
+      "content": "Company membership"
+    },
+    {
+      "type": "text",
+      "id": "member_text",
+      "label": "Member"
+    },
+    {
+      "type": "image_picker",
+      "id": "member_logo",
+      "label": "t:sections.header.blocks.logo.settings.logo.label"
+    },
+    {
+      "type": "url",
+      "id": "member_link",
+      "label": "URL"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "newsletter",
+      "name": "Newsletter",
+      "limit": 1
+    },
+    {
+      "type": "follow-us",
+      "name": "Follow us",
+      "limit": 1
+    },
+    {
+      "type": "navigate",
+      "name": "Navigate",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Menu Content",
+          "info": "Each line corresponds to 1 item"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer 2"
+    }
+  ]
+}
+{% endschema %}

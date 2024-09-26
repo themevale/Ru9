@@ -1,0 +1,176 @@
+{% comment %}
+  - collection: Liquid 'collection' or 'search' object
+  - enable_sidebar: boolean
+  - filter_style: 'sidebar' or 'drawer'
+  - enable_color_swatches: boolean
+  - collapsed: boolean
+{% endcomment %}
+
+{% liquid
+  assign filters = collection.filters
+  assign sort_by = collection.sort_by
+  assign default_sort_by = collection.default_sort_by
+  assign sort_options = collection.sort_options
+  assign current_filter_size = 0
+
+  for filter in filters
+    assign current_filter_size = current_filter_size | plus: filter.active_values.size
+  endfor
+
+  if collection.products
+    assign count = collection.products_count
+    assign count_label = 'collections.general.items_with_count'
+  endif
+
+  if collection.results
+    assign count = collection.results_count
+    assign count_label = 'general.search.result_count'
+  endif
+%}
+
+{%- assign animation_row = 1 -%}
+
+{%- if enable_sidebar -%}
+  <div id="CollectionSidebar" data-style="{{ filter_style }}">
+    {%- if enable_collection_count -%}
+      <div class="collection-filter__item collection-filter__item--count small--hide">
+        {{ count_label | t: count: count }}
+      </div>
+    {%- endif -%}
+    <div class="medium-down--hide">
+      <div class="collection-filter">
+        <div class="collection-filter__item collection-filter__item--sort">
+          <div class="collection-filter__sort-container">
+            {%- assign sort_by = sort_by | default: default_sort_by -%}
+            <label for="SortBy" class="text-label collapsible-trigger-btn m-0">
+              {{- 'collections.sorting.title' | t -}}
+            </label>
+            <select name="SortBy" id="SortBy" data-default-sortby="{{ default_sort_by }}">
+              <option
+                value="title-ascending"
+                {% if sort_by == default_sort_by %}
+                  selected="selected"
+                {% endif %}
+              >
+                {{ 'collections.sorting.title' | t }}
+              </option>
+              {%- for option in sort_options -%}
+                <option
+                  value="{{ option.value }}"
+                  {% if option.value == sort_by %}
+                    selected="selected"
+                  {% endif %}
+                >
+                  {{ option.name }}
+                </option>
+              {%- endfor -%}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {%- if filter_style == 'sidebar' -%}
+        <div class="collection-sidebar small--hide">
+          {%- render 'collection-grid-filters-form',
+            location: 'CollectionSidebar',
+            filters: collection.filters,
+            collection: collection,
+            sort_by: sort_by,
+            collapsed: collapsed,
+            enable_color_swatches: enable_color_swatches
+          -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div id="FilterDrawer" class="drawer drawer--center">
+      <div class="drawer__contents">
+        <div class="drawer__fixed-header">
+          <div class="drawer__header appear-animation appear-delay-{{ animation_row }}">
+            <div class="drawer__title f-bold m-0">
+              {{ 'collections.filters.sort_and_filter' | t }}
+            </div>
+            <div class="drawer__close">
+              <button type="button" class="drawer__close-button js-drawer-close">
+                <svg
+                  aria-hidden="true"
+                  focusable="false"
+                  role="presentation"
+                  class="icon icon-close"
+                  viewBox="0 0 64 64"
+                >
+                  <title>icon-X</title><path d="m19 17.61 27.12 27.13m0-27.12L19 44.74"/>
+                </svg>
+                <span class="icon__fallback-text">{{ 'general.drawers.close_menu' | t }}</span>
+              </button>
+            </div>
+            <div class="collection-filter-count text-sm">
+              {{ count_label | t: count: count }}
+            </div>
+          </div>
+        </div>
+
+        {%- assign animation_row = animation_row | plus: 1 -%}
+        <div class="drawer__scrollable appear-animation appear-delay-{{ animation_row }}">
+          {%- render 'collection-grid-filters-form',
+            location: 'SidebarDrawer',
+            filters: collection.filters,
+            collapsed: true,
+            enable_color_swatches: enable_color_swatches
+          -%}
+          <div class="collection-filter">
+            <div class="collection-filter__item collection-filter__item--sort">
+              <div class="collection-filter__sort-container">
+                {%- assign sort_by = sort_by | default: default_sort_by -%}
+                <label for="SortByMobile" class="text-label collapsible-trigger-btn m-0">
+                  {{- 'collections.sorting.title' | t -}}
+                </label>
+                <select name="SortByMobile" id="SortByMobile" data-default-sortby-mobile="{{ default_sort_by }}">
+                  <option
+                    value="title-ascending"
+                    {% if sort_by == default_sort_by %}
+                      selected="selected"
+                    {% endif %}
+                  >
+                    {{ 'collections.sorting.title' | t }}
+                  </option>
+                  {%- for option in sort_options -%}
+                    <option
+                      value="{{ option.value }}"
+                      {% if option.value == sort_by %}
+                        selected="selected"
+                      {% endif %}
+                    >
+                      {{ option.name }}
+                    </option>
+                  {%- endfor -%}
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="drawer__footer">
+          <div class="drawer__buttons flex ai-center">
+            <button type="button" class="drawer__buttons-item btn js-drawer-close">
+              {{- 'collections.filters.apply' | t -}}
+            </button>
+            <a
+              href="{{ collection.url }}"
+              class="drawer__buttons-item btn btn--inverse collection-facets-clear text-sm"
+            >
+              {{- 'collections.filters.clear_all' | t -}}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{%- unless enable_sort -%}
+  {% style %}
+    .collection-filter__item--sort {
+      display: none;
+    }
+  {% endstyle %}
+{%- endunless -%}

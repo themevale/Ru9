@@ -1,0 +1,152 @@
+<div data-section-id="{{ section.id }}" data-section-type="banner-w-coll-section">
+  {% liquid
+    if section.settings.section_width != 'page-width'
+      if section.settings.section_width == 'full-width'
+        assign page_width = '100%'
+      endif
+      if section.settings.section_width == 'customize_width'
+        assign page_width = section.settings.customize_width | plus: 80 | append: 'px'
+      endif
+    endif
+
+    assign products = section.settings.collection.products
+    assign products_to_display = section.settings.collection.all_products_count
+    if products_to_display > section.settings.products_to_show
+      assign products_to_display = section.settings.products_to_show
+    endif
+
+    assign fallback = 'variable'
+  %}
+  <div class="banner-w-collection">
+    <div
+      class="page-width{% if section.settings.section_width == 'full-width' %} page-full page-full--flush{% endif %}"
+      style="{% if section.settings.section_width != 'page-width' %}--page-width: {{ page_width }}{% endif %}"
+    >
+      <div class="banner-w-coll__container relative">
+        <div class="banner-w-coll__bg" style="--min-height-image:{{ section.settings.image_min_height }}px;">
+          {%- if section.settings.image != blank -%}
+            <div class="image-wrap">
+              {% assign img = section.settings.image | img_url: 'master' %}
+              {% assign img_mobile = section.settings.image_mobile | img_url: 'master' %}
+              <picture>
+                <source media="(min-width:769px)" srcset="{{ img }}">
+                <img
+                  loading="lazy"
+                  src="{{ img_mobile }}"
+                  alt="{{ section.settings.title }}"
+                  width="{{section.settings.image_mobile.width}}"
+                  height="{{ section.settings.image_mobile.height}}"
+                >
+              </picture>
+            </div>
+          {%- else -%}
+            {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          {%- endif -%}
+        </div>
+        <div class="banner-w-coll__collection absolute">
+          <div class="collection-container" id="Banner-Collection-{{ section.id }}">
+            {%- for product in products limit: section.settings.products_to_show -%}
+              <div class="collection-item-wrap w-full">
+                {%- render 'product-grid-item',
+                  product: product,
+                  collection: collection,
+                  per_row: 1,
+                  quick_shop_enable: settings.quick_shop_enable,
+                  center_alignment: 'left',
+                  hide_btndetail: true,
+                  fallback: fallback
+                -%}
+              </div>
+            {%- endfor -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.banner_w_collection.presets.name",
+  "class": "index-section ovh",
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "options": [
+        {
+          "value": "full-width",
+          "label": "t:sections.all.section_width.options__1"
+        },
+        {
+          "value": "page-width",
+          "label": "t:sections.all.section_width.options__2"
+        },
+        {
+          "value": "customize_width",
+          "label": "t:sections.all.section_width.options__3"
+        }
+      ],
+      "default": "page-width",
+      "label": "t:sections.all.section_width.label"
+    },
+    {
+      "type": "range",
+      "id": "customize_width",
+      "min": 1000,
+      "max": 1800,
+      "step": 10,
+      "default": 1800,
+      "unit": "px",
+      "label": "t:sections.all.customize_width.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.image.header"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Image mobile"
+    },
+    {
+      "type": "range",
+      "id": "image_min_height",
+      "label": "t:sections.all.height.label__1",
+      "default": 458,
+      "min": 300,
+      "step": 2,
+      "max": 500,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.collection.header"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "t:sections.all.collection.label"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 5,
+      "label": "t:sections.all.product.product_list_limit"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.banner_w_collection.presets.name"
+    }
+  ]
+}
+{% endschema %}

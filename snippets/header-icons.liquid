@@ -1,0 +1,56 @@
+<div class="site-nav">
+  <div class="site-nav__icons flex ai-center">
+    {%- if settings.search_enable -%}
+      <div class="site-nav__link site-nav__link--icon large-up--hide">
+        <a href="{{ routes.search_url }}" class="js-search-header flex gap-x-xs">
+          {% render 'icon-search' %}
+        </a>
+      </div>
+    {%- endif -%}
+    {%- if shop.customer_accounts_enabled -%}
+      <a class="site-nav__link site-nav__link--icon" href="{{ routes.account_url }}">
+        {% render 'icon-user' %}
+        <span class="icon__fallback-text">
+          {%- if customer -%}
+            {{ 'layout.customer.account' | t }}
+          {%- else -%}
+            {{ 'layout.customer.log_in' | t }}
+          {%- endif -%}
+        </span>
+      </a>
+    {%- endif -%}
+
+    <a
+      href="{{ routes.cart_url }}"
+      class="site-nav__link site-nav__link--icon js-drawer-open-cart"
+      aria-controls="CartDrawer"
+      data-icon="{{ settings.cart_icon }}"
+    >
+      <span class="cart-link">
+        {%- if settings.cart_icon == 'cart' -%}
+          {% render 'icon-cart-2' %}
+        {%- elsif settings.cart_icon == 'bag-minimal' -%}
+          <svg
+            aria-hidden="true"
+            focusable="false"
+            role="presentation"
+            class="icon icon-bag-minimal"
+            viewBox="0 0 64 64"
+          >
+            <title>icon-bag-minimal</title><path stroke="null" fill-opacity="null" stroke-opacity="null" fill="null" d="M11.375 17.863h41.25v36.75h-41.25z"/><path stroke="null" d="M22.25 18c0-7.105 4.35-9 9.75-9s9.75 1.895 9.75 9"/>
+          </svg>
+        {%- else -%}
+          <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-bag" viewBox="0 0 64 64">
+            <g fill="none" stroke="#000" stroke-width="2"><path d="M25 26c0-15.79 3.57-20 8-20s8 4.21 8 20"/><path d="M14.74 18h36.51l3.59 36.73h-43.7z"/></g>
+          </svg>
+        {%- endif -%}
+        <span class="icon__fallback-text">{{ 'layout.cart.title' | t }}</span>
+        <span class="cart-link__bubble cart-link__bubble--visible">
+          <span class="cart-link__bubble-num">
+            {{cart.item_count}}
+          </span>
+        </span>
+      </span>
+    </a>
+  </div>
+</div>

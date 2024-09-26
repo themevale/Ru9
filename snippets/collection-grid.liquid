@@ -1,0 +1,99 @@
+{% comment %}
+  Snippet Arguments
+  - collection: Liquid 'collection' or 'search' object
+  - items: Paginated 'collection.products' or 'search.results' list. Cannot be pulled from the the 'collection' object passed in above
+  - enable_sidebar: boolean
+  - filter_style: 'sidebar' or 'drawer'
+  - enable_sort: boolean
+  - enable_collection_count
+  - per_row
+  - mobile_flush_grid
+  - quick_shop_enable
+{% endcomment %}
+
+<div class="collection-grid__wrapper collection">
+  <div class="collection-filter{% if enable_collection_count %} enable-collection-count{% endif %}">
+    <div class="collection-filter__item collection-filter__item--drawer">
+      <button
+        type="button"
+        class="js-drawer-open-collection-filters btn btn--tertiary{% unless current_filter_size == 0 %} btn--tertiary-active{% endunless %}"
+        aria-controls="FilterDrawer"
+      >
+        <svg
+          aria-hidden="true"
+          focusable="false"
+          role="presentation"
+          class="icon icon-filter"
+          viewBox="0 0 28 28"
+          fill="none"
+        >
+            <title>icon-filter</title>
+          <path d="M24.5 4.6665V6.99984H23.3333L17.5 15.7498V25.6665H10.5V15.7498L4.66667 6.99984H3.5V4.6665H24.5ZM7.47133 6.99984L12.8333 15.0428V23.3332H15.1667V15.0428L20.5287 6.99984H7.47133Z" fill="#234085"/>
+        </svg>
+
+        {{ 'collections.filters.sort_and_filter' | t }}
+        {%- if current_filter_size > 0 -%}
+          ({{ current_filter_size }})
+        {%- endif -%}
+      </button>
+    </div>
+  </div>
+  <div
+    class="grid{% if mobile_flush_grid %} small--grid--flush{% endif %}"
+    {% unless enable_collection_count %}
+      data-scroll-to
+    {% endunless %}
+  >
+    {%- for item in items -%}
+      {%- if item.object_type == 'product' -%}
+        {%- render 'product-grid-item',
+          product: item,
+          per_row: per_row,
+          show_product_description: show_product_description,
+          show_product_rating: true,
+          fixed_aspect_ratio: true,
+          image_style: product_grid_image_size,
+          quick_shop_enable: quick_shop_enable
+        -%}
+      {%- else -%}
+        {%- render 'search-grid-item', item: item, per_row: per_row %}
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{%- if enable_sidebar and filter_style != 'drawer' and collection.filters.size > 0 -%}
+  {% comment %}
+    Sidebar enabled but not in drawer mode, only show filter button on mobile
+  {% endcomment %}
+  {% style %}
+    @media screen and (min-width: 960px) {
+      .collection-filter__item--drawer {
+        display: none;
+      }
+      .collection-filter__item--count {
+        text-align: left;
+      }
+      html[dir='rtl'] .collection-filter__item--count {
+        text-align: right;
+      }
+    }
+  {% endstyle %}
+{%- endif -%}
+
+{%- if enable_sidebar == false or collection.filters.size == 0 -%}
+  {% comment %}
+    Disable sidebar & filter features
+  {% endcomment %}
+  {% style %}
+    .collection-filter__item--drawer {
+      display: none;
+    }
+    .collection-filter__item--count {
+      text-align: left;
+    }
+    html[dir='rtl'] .collection-filter__item--count {
+      text-align: right;
+    }
+  {% endstyle %}
+{%- endif -%}

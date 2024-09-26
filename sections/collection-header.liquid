@@ -1,0 +1,143 @@
+{%- assign disable_sticky_header = false -%}
+{% liquid
+  if section.settings.section_width != 'page-width'
+    if section.settings.section_width == 'full-width'
+      assign page_width = '100%'
+    endif
+    if section.settings.section_width == 'customize_width'
+      assign page_width = section.settings.customize_width | plus: 80 | append: 'px'
+    endif
+  endif
+
+  assign align = section.settings.align_text | prepend: 'text-'
+%}
+{%- if section.settings.enable -%}
+  {%- if section.settings.collection_image_enable and collection.image -%}
+    <div
+      id="CollectionHeaderSection"
+      data-section-id="{{ section.id }}"
+      data-section-type="collection-header"
+    >
+      <div class="collection-hero">
+        <div class="collection-hero__image-wrap">
+          {%- render 'image-element',
+            img: collection.image,
+            img_width: collection.image.width,
+            img_height: collection.image.height,
+            classes: 'collection-hero__image image-fit',
+            preload: true,
+            loading: 'eager'
+          -%}
+        </div>
+
+        <div class="collection-hero__content">
+          <div
+            class="page-width"
+            style="{% if section.settings.section_width != 'page-width' %}--page-width: {{ page_width }}{% endif %}"
+          >
+            <header class="section-header section-header--hero {{ align }}">
+              {%- render 'breadcrumbs', classes: align -%}
+              <h1 class="section-header__title text-3xl f-smb">
+                {{ collection.title }}
+              </h1>
+              {%- if section.settings.show_collection_description -%}
+                <div class="rte section-header__desc">
+                  {{ collection.description }}
+                </div>
+              {%- endif -%}
+            </header>
+          </div>
+        </div>
+      </div>
+    </div>
+  {%- else -%}
+    {%- assign disable_sticky_header = true -%}
+    <div class="page-width page-content page-content--top">
+      <header class="section-header section-header--flush {{ align }}">
+        {%- render 'breadcrumbs', classes: align -%}
+        <h1 class="section-header__title text-3xl f-smb">
+          {{ collection.title }}
+        </h1>
+      </header>
+    </div>
+  {%- endif -%}
+{% else %}
+  {%- assign disable_sticky_header = true -%}
+{%- endif -%}
+
+{%- if disable_sticky_header -%}
+  {% comment %}
+    Div to trigger theme.CollectionHeader JS
+  {% endcomment %}
+  <div
+    id="CollectionHeaderSection"
+    data-section-id="{{ section.id }}"
+    data-section-type="collection-header"
+  ></div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.collection-header.name",
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "options": [
+        {
+          "value": "full-width",
+          "label": "t:sections.all.section_width.options__1"
+        },
+        {
+          "value": "page-width",
+          "label": "t:sections.all.section_width.options__2"
+        },
+        {
+          "value": "customize_width",
+          "label": "t:sections.all.section_width.options__3"
+        }
+      ],
+      "default": "page-width",
+      "label": "t:sections.all.section_width.label"
+    },
+    {
+      "type": "range",
+      "id": "customize_width",
+      "min": 1000,
+      "max": 1800,
+      "step": 10,
+      "default": 1800,
+      "unit": "px",
+      "label": "t:sections.all.customize_width.label"
+    },
+    {
+      "type": "text_alignment",
+      "id": "align_text",
+      "label": "t:sections.all.alignment.label__1",
+      "default": "left"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable",
+      "label": "t:sections.collection-header.settings.enable.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "collection_image_enable",
+      "label": "t:sections.collection-header.settings.collection_image_enable.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_description",
+      "default": true,
+      "label": "t:sections.collection-header.settings.show_collection_description.label",
+      "info": "t:sections.collection-header.settings.show_collection_description.info"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["footer", "header", "custom.popups"]
+  }
+}
+{% endschema %}

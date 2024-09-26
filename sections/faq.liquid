@@ -1,0 +1,260 @@
+<style>
+  @media only screen and (max-width: 959px) {
+    #shopify-section-{{section.id}} .section-header {
+        margin-bottom: 24px;
+    }
+  }
+
+  @media only screen and (max-width: 768px) {
+    #shopify-section-{{section.id}} .collapsible-trigger--inline {
+      padding-block: 26.5px;
+    }
+  }
+</style>
+{%- if section.settings.divider -%}<div class="section--divider">{%- endif -%}
+{% liquid
+  if section.settings.section_width != 'page-width'
+    if section.settings.section_width == 'full-width'
+      assign page_width = '100%'
+    endif
+    if section.settings.section_width == 'customize_width'
+      assign page_width = section.settings.customize_width | plus: 80 | append: 'px'
+    endif
+  endif
+%}
+<div
+  class="page-width"
+  style="{% if section.settings.section_width != 'page-width' %}--page-width: {{ page_width }}{% endif %}"
+>
+  {%- if section.settings.title != blank -%}
+    <header class="section-header">
+      <h2 class="section-header__title">
+        {{ section.settings.title | escape }}
+      </h2>
+    </header>
+  {%- endif -%}
+
+  {%- if section.blocks.size > 0 -%}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'question' %}
+                {
+                  "@type": "Question",
+                  "name": {{ block.settings.title | json }},
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": {{ block.settings.text | json }}
+                  }
+                }{% unless forloop.last %},{% endunless %}
+            {% endcase %}
+          {% endfor %}
+        ]
+      }
+    </script>
+
+    <div class="collapsible-wrap">
+      {%- for block in section.blocks -%}
+        <div {{ block.shopify_attributes }} class="collapsible-trigger-wrap">
+          {% case block.type %}
+            {% when 'rich-text' %}
+              <div class="index-section index-section--faq">
+                <div class="text-{{ block.settings.align_text }}">
+                  {%- if block.settings.title != blank -%}
+                    <p class="h2">
+                      {{ block.settings.title | escape }}
+                    </p>
+                  {%- endif -%}
+                  {%- if block.settings.text != blank -%}
+                    <div class="rte">
+                      {%- if block.settings.enlarge_text %}<div class="enlarge-text">{% endif -%}
+                      {{ block.settings.text }}
+                      {%- if block.settings.enlarge_text %}</div>{% endif -%}
+                    </div>
+                  {%- endif -%}
+                </div>
+              </div>
+
+            {% when 'question' %}
+              <div>
+                <button
+                  type="button"
+                  class="collapsible-trigger collapsible-trigger--inline collapsible--auto-height w-full text-lg f-bold text-left"
+                  aria-controls="FAQ-content-{{ block.id }}"
+                >
+                  <span>{{ block.settings.title }}</span>
+                  {%- render 'collapsible-icons-alt' -%}
+                </button>
+                <div id="FAQ-content-{{ block.id }}" class="collapsible-content collapsible-content--all">
+                  <div class="collapsible-content__inner collapsible-content__inner--faq rte">
+                    {{ block.settings.text }}
+                  </div>
+                </div>
+              </div>
+          {% endcase %}
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  {%- if section.blocks.size == 0 -%}
+    <div class="placeholder-noblocks">
+      {{ 'home_page.onboarding.no_content' | t }}
+    </div>
+  {%- endif -%}
+</div>
+
+{%- if section.settings.divider -%}</div>{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.faq.name",
+  "class": "index-section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "options": [
+        {
+          "value": "full-width",
+          "label": "t:sections.all.section_width.options__1"
+        },
+        {
+          "value": "page-width",
+          "label": "t:sections.all.section_width.options__2"
+        },
+        {
+          "value": "customize_width",
+          "label": "t:sections.all.section_width.options__3"
+        }
+      ],
+      "default": "page-width",
+      "label": "t:sections.all.section_width.label"
+    },
+    {
+      "type": "range",
+      "id": "customize_width",
+      "min": 800,
+      "max": 1800,
+      "step": 10,
+      "default": 1800,
+      "unit": "px",
+      "label": "t:sections.all.customize_width.label"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.faq.settings.title.label",
+      "default": "FAQs"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "rich-text",
+      "name": "t:sections.faq.blocks.rich_text.name",
+      "settings": [
+        {
+          "type": "select",
+          "id": "section_width",
+          "options": [
+            {
+              "value": "full-width",
+              "label": "t:sections.all.section_width.options__1"
+            },
+            {
+              "value": "page-width",
+              "label": "t:sections.all.section_width.options__2"
+            },
+            {
+              "value": "customize_width",
+              "label": "t:sections.all.section_width.options__3"
+            }
+          ],
+          "default": "page-width",
+          "label": "t:sections.all.section_width.label"
+        },
+        {
+          "type": "range",
+          "id": "customize_width",
+          "min": 1000,
+          "max": 1800,
+          "step": 10,
+          "default": 1800,
+          "unit": "px",
+          "label": "t:sections.all.customize_width.label"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.faq.blocks.rich_text.settings.title.label",
+          "default": "Rich text"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "t:sections.faq.blocks.rich_text.settings.text.label",
+          "default": "<p>Use this section for any descriptive text you need to fill out your pages or to add introductory headings between other blocks.</p>"
+        },
+        {
+          "type": "select",
+          "id": "align_text",
+          "label": "t:sections.faq.blocks.rich_text.settings.align_text.label",
+          "default": "left",
+          "options": [
+            {
+              "value": "left",
+              "label": "t:sections.faq.blocks.rich_text.settings.align_text.options.left.label"
+            },
+            {
+              "value": "center",
+              "label": "t:sections.faq.blocks.rich_text.settings.align_text.options.center.label"
+            },
+            {
+              "value": "right",
+              "label": "t:sections.faq.blocks.rich_text.settings.align_text.options.right.label"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "question",
+      "name": "t:sections.faq.blocks.question.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.faq.blocks.question.settings.title.label",
+          "default": "Frequently asked question"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "t:sections.faq.blocks.question.settings.text.label",
+          "default": "<p>Use this text to answer questions in as much detail as possible for your customers.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.faq.presets.faq.name",
+      "blocks": [
+        {
+          "type": "question"
+        },
+        {
+          "type": "question"
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["footer", "header", "custom.popups"]
+  }
+}
+{% endschema %}

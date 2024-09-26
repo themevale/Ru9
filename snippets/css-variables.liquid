@@ -1,0 +1,175 @@
+{%- style -%}
+  @font-face {
+      font-family: 'Lexend';
+      src: url({{'Lexend-Bold.woff2' | asset_url }}) format('woff2'),
+          url({{'Lexend-Bold.woff' | asset_url }}) format('woff');
+      font-weight: bold;
+      font-style: normal;
+      font-display: fallback;
+  }
+
+  @font-face {
+      font-family: 'Lexend';
+      src: url({{'Lexend-Regular.woff2' | asset_url }}) format('woff2'),
+          url({{'Lexend-Regular.woff' | asset_url }}) format('woff');
+      font-weight: normal;
+      font-style: normal;
+      font-display: fallback;
+  }
+
+  @font-face {
+      font-family: 'Lexend';
+      src: url({{'Lexend-SemiBold.woff2' | asset_url }}) format('woff2'),
+          url({{'Lexend-SemiBold.woff' | asset_url }}) format('woff');
+      font-weight: 600;
+      font-style: normal;
+      font-display: fallback;
+  }
+
+  @font-face {
+      font-family: 'Lexend';
+      src: url({{'Lexend-Medium.woff2' | asset_url }}) format('woff2'),
+          url({{'Lexend-Medium.woff' | asset_url }}) format('woff');
+      font-weight: 500;
+      font-style: normal;
+      font-display: fallback;
+  }
+
+      :root {
+        --typeHeaderPrimary: Lexend;
+        --typeHeaderFallback: {{ settings.type_header_font_family.fallback_families }};
+        --typeHeaderSize: {{ settings.type_header_base_size | default: '32' | append: 'px' }};
+        --typeHeaderWeight: 700;
+        --typeHeaderLineHeight: {{ settings.type_header_line_height | default: 1.4 }};
+        --typeHeaderSpacing: {{ settings.type_header_spacing | default: '25' | divided_by: 1000.00 | append: 'em' }};
+
+        --typeBasePrimary: Lexend;
+        --typeBaseFallback:{{ settings.type_base_font_family.fallback_families }};
+        --typeBaseSize: {{ settings.type_base_size | default: 16 | append: 'px' }};
+        --typeBaseWeight: 400;
+        --typeBaseSpacing: {{ settings.type_base_spacing | default: '50' | divided_by: 1000.00 | append: 'em' }};
+        --typeBaseLineHeight: {{ settings.type_base_line_height | default: 1.4 }};
+        --typeBaselineHeightMinus01: {{ settings.type_base_line_height | default: 1.4 | minus: 0.1 }};
+
+        --typeCollectionTitle: {{ settings.type_collection_size | append: 'px' }};
+
+        --iconWeight: {{ settings.icon_weight | default: '5px' }};
+        --iconLinecaps: {{ settings.icon_linecaps | default: 'miter' }};
+
+        --radiusBase: {{ settings.rounded }}px;
+
+        {% if settings.button_style == 'round-slight' %}
+            --buttonRadius: 8px;
+        {% elsif settings.button_style == 'round' %}
+            --buttonRadius: 40px;
+        {% else %}
+            --buttonRadius: 0;
+        {% endif %}
+
+        --colorGridOverlayOpacity: {{ settings.collection_grid_opacity | divided_by: 100.0 }};
+
+        --colorAnnouncement:{{ settings.color_announcement | default: "#1c1d1d" }};
+        --colorAnnouncementText:{{ settings.color_announcement_text | default: "#fff" }};
+
+        --colorBody:{{ settings.color_body_bg | default: "#fff" }};
+        --colorBodyAlpha05:{{ settings.color_body_bg | default: "#fff" | color_modify: "alpha", 0.05 }};
+        --colorBodyDim:{{ settings.color_body_bg | default: "#1c1d1d" | color_darken: 5 }};
+        --colorBodyLightDim:{{ settings.color_body_bg | default: "#fff" | color_darken: 2 }};
+        --colorBodyMediumDim:{{ settings.color_body_bg | default: "#fff" | color_darken: 4 }};
+
+        --colorPlaceholderText: {{  settings.placeholder_text | default: "#6B7280" }};
+
+        --colorBorder:{{ settings.color_borders | default: "#1c1d1d" }};
+
+        --colorBtnPrimary:{{ settings.color_button | default: "#000" }};
+        --colorBtnPrimaryLight:{{ settings.color_button | default: "#000" | color_lighten: 10 }};
+        --colorBtnPrimaryDim:{{ settings.color_button | default: "#000" | color_darken: 5 }};
+        --colorBtnPrimaryText:{{ settings.color_button_text | default: "#fff" }};
+
+        --colorBtnSecondary:{{ settings.color_button_secondary | default: "#000" }};
+        --colorBtnSecondaryText:{{ settings.color_button_secondary_text | default: "#fff" }};
+
+        --colorCartDot:{{ settings.color_cart_dot | default: "#ff4f33" }};
+
+        --colorDrawers:{{ settings.color_drawer_background | default: "#1c1d1d" }};
+        --colorDrawersDim:{{ settings.color_drawer_background | default: "#1c1d1d" | color_darken: 5 }};
+        --colorDrawerBorder:{{ settings.color_drawer_border | default: "#343535" }};
+        --colorDrawerText:{{ settings.color_drawer_text | default: "#fff" }};
+        --colorDrawerTextDark:{{ settings.color_drawer_text | default: "#fff" | color_darken: 15 }};
+        --colorDrawerButton:{{ settings.color_drawer_button | default: "#a26b25" }};
+        --colorDrawerButtonText:{{ settings.color_drawer_button_text | default: "#fff" }};
+
+        --colorFooter:{{ settings.color_footer | default: "#111" }};
+        --colorFooterText:{{ settings.color_footer_text | default: "#fff" }};
+        --colorFooterTextAlpha01:{{ settings.color_footer_text | default: "#fff" }};
+
+        --colorGridOverlay:{{ settings.collection_grid_tint | default: "#000" }};
+        --colorGridOverlayOpacity:0.1;
+
+        --colorHeaderTextAlpha01:{{ settings.color_header_text | default: "#000" | color_modify: "alpha", 0.1 }};
+
+        --colorHeroText:{{ settings.color_image_text | default: "#fff" }};
+
+        --colorSmallImageBg:{{ settings.color_small_image_bg | default: "#eee" }};
+        --colorLargeImageBg:{{ settings.color_large_image_bg | default: "#1c1d1d" }};
+
+        --colorImageOverlay:{{ settings.color_image_overlay | default: "#000" }};
+        --colorImageOverlayOpacity:{{ settings.color_image_overlay_opacity | divided_by: 100.0 }};
+        --colorImageOverlayTextShadow:{{ settings.color_image_overlay_text_shadow | divided_by: 100.0 }};
+
+        --colorModalBg:{{ settings.color_modal_overlays | default: "#000" | color_modify: "alpha", 0.25 }};
+
+        --colorNav:{{ settings.color_header }};
+        --colorNavText:{{ settings.color_header_text }};
+
+        --colorPrice:{{ settings.color_price | default: "#1c1d1d" }};
+
+        --colorLink:{{ settings.color_link | default: "#1c1d1d" }};
+
+        --colorArrow:{{ settings.color_arrow | default: "#1c1d1d" }};
+        --colorArrowHover:{{ settings.color_arrow_hover | default: "#1c1d1d" }};
+        --backgroundArrow:{{ settings.background_arrow | default: "#1c1d1d" }};
+        --backgroundArrowHover:{{ settings.background_arrow_hover | default: "#1c1d1d" }};
+
+        --colorSaleTag:{{ settings.color_sale_tag | default: "#1c1d1d" }};
+        --colorSaleTagText:{{ settings.color_sale_tag_text | default: "#ffffff" }};
+
+        --colorNewTag:{{ settings.color_new_tag | default: "#1c1d1d" }};
+        --colorNewTagText:{{ settings.color_new_tag_text | default: "#ffffff" }};
+
+        --colorTextBody:{{ settings.color_body_text | default: "#1c1d1d" }};
+        --colorTextBodyAlpha015:{{ settings.color_body_text | default: "#1c1d1d" | color_modify: "alpha", 0.15 }};
+        --colorTextBodyAlpha005:{{ settings.color_body_text | default: "#1c1d1d" | color_modify: "alpha", 0.05 }};
+        --colorTextBodyAlpha008:{{ settings.color_body_text | default: "#1c1d1d" | color_modify: "alpha", 0.08 }};
+        --colorTextSavings:{{ settings.color_savings_text | default: "#1c1d1d" }};
+
+        --colorTextHeading:{{ settings.color_heading_text | default: "#1c1d1d" }};
+
+        --colorLinkBreadcrumb:{{ settings.color_breadcrumb_link }};
+
+        --urlIcoSelect:url({{ 'ico-select.svg' | asset_url | split: '?' | first }});
+        --urlIcoSelectFooter:url({{ 'ico-select-footer.svg' | asset_url | split: '?' | first }});
+        --urlIcoSelectWhite:url({{ 'ico-select-white.svg' | asset_url | split: '?' | first }});
+
+        --page-width: {{ settings.page_width | plus: 80 }}px;
+        --grid-desktop-vertical-spacing: {{ settings.spacing_grid_vertical }}px;
+        --grid-desktop-horizontal-spacing: {{ settings.spacing_grid_horizontal }}px;
+        --grid-mobile-vertical-spacing: {{ settings.spacing_grid_vertical | divided_by: 2 }}px;
+        --grid-mobile-horizontal-spacing: {{ settings.spacing_grid_horizontal | divided_by: 2 }}px;
+
+        --grid-gutter:17px;
+        --drawer-gutter:16px;
+
+        --sizeChartMargin:25px 0;
+        --sizeChartIconMargin:5px;
+
+        --newsletterReminderPadding:40px;
+        --color-body-text:{{ settings.color_body_text | default: "#1c1d1d" }};
+        --color-body:{{ settings.color_body_bg | default: "#fff" }};
+        --color-bg:{{ settings.color_body_bg | default: "#fff" }};
+      }
+
+      .placeholder-content {
+      background-image: linear-gradient(100deg, {{ settings.color_small_image_bg }} 40%, {{ settings.color_small_image_bg | color_darken: 3 }} 63%, {{ settings.color_small_image_bg }} 79%);
+      }
+{%- endstyle -%}

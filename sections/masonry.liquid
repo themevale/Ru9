@@ -1,0 +1,270 @@
+<style>
+  @media screen and (min-width: 769px){
+    .masonry-layout:not(.medium-up--hide) {
+      --odd-row: {{ section.settings.odd_row_height | times: 0.68 }}px;
+      --even-row: {{ section.settings.even_row_height |  times: 0.68 }}px;
+    }
+  }
+  @media screen and (min-width: 960px){
+    .masonry-layout:not(.medium-up--hide) {
+      --odd-row: {{ section.settings.odd_row_height }}px;
+      --even-row: {{ section.settings.even_row_height }}px;
+    }
+  }
+</style>
+
+<div data-section-id="{{ section.id }}" data-section-type="masonry-section">
+  {% liquid
+    if section.settings.section_width != 'page-width'
+      if section.settings.section_width == 'full-width'
+        assign page_width = '100%'
+      endif
+      if section.settings.section_width == 'customize_width'
+        assign page_width = section.settings.customize_width | plus: 80 | append: 'px'
+      endif
+    endif
+  %}
+  <div class="masonry">
+    <div
+      class="page-width"
+      style="{% if section.settings.section_width != 'page-width' %}--page-width: {{ page_width }}{% endif %}"
+    >
+      <div class="section-header" data-aos="fade-in">
+        <h2 class="section-header__title">{{ section.settings.title }}</h2>
+        <div class="rte text-lg">{{ section.settings.description }}</div>
+      </div>
+      {%- if section.blocks.size > 0 -%}
+        <div class="masonry-layout{% if section.settings.carousel_mobile %} small--hide{% endif %}">
+          {%- for block in section.blocks -%}
+            {%- liquid
+              if forloop.index == 1
+                assign loading = section.settings.lazyload_images
+              else
+                assign loading = true
+              endif
+            -%}
+            <div class="masonry-item relative image-wrap rounded-base hover--zoom-img">
+              <div class="masonry-item__banner h-full" data-aos="image-fade-in">
+                {%- if block.settings.image != blank or block.settings.image_mobile != blank -%}
+                  <picture>
+                    <source media="(min-width:769px)" srcset="{{ block.settings.image | img_url: '900x' }}">
+                    <img
+                      loading="lazy"
+                      src="{{ block.settings.image_mobile | img_url: '900x' }}"
+                      alt="{% if block.settings.image_mobile.alt != blank %}{{ block.settings.image_mobile.alt }}{% else %}{{ block.settings.btn_text }} {% endif %}"
+                    >
+                  </picture>
+                {%- else -%}
+                  {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                {%- endif -%}
+              </div>
+              {% if block.settings.btn_text != blank %}
+                <a
+                  href="{{ block.settings.btn_link }}"
+                  class="masonry-item__link leading-14 flex ai-end absolute inset-0"
+                >
+                  <span
+                    class="btn btn--round btn--custom"
+                    style="--colorBtnPrimary: {{ section.settings.button_background }};--colorBtnPrimaryText: {{ section.settings.button_color }};"
+                  >
+                    {{- block.settings.btn_text -}}
+                  </span>
+                </a>
+              {% endif %}
+            </div>
+          {%- endfor -%}
+        </div>
+
+        {% if section.settings.carousel_mobile %}
+          <div class="masonry_layout medium-up--hide" id="Masonry-{{ section.id }}">
+            {%- for block in section.blocks -%}
+              {%- liquid
+                if forloop.index == 1
+                  assign loading = section.settings.lazyload_images
+                else
+                  assign loading = true
+                endif
+              -%}
+              <div class="masonry-item w-full relative image-wrap rounded-base hover--zoom-img">
+                <div class="masonry-item__banner h-full">
+                  {%- if block.settings.image != blank or block.settings.image_mobile != blank -%}
+                    <img
+                      loading="lazy"
+                      {% if block.settings.image_mobile != blank %}
+                        src="{{ block.settings.image_mobile | img_url: '900x' }}"
+                        alt="{% if block.settings.image_mobile.alt != blank %}{{ block.settings.image_mobile.alt }}{% else %}{{ block.settings.btn_text }} {% endif %}"
+                      {% else %}
+                        src="{{ block.settings.image | img_url: '900x' }}"
+                        alt="{% if block.settings.image.alt != blank %}{{ block.settings.image.alt }}{% else %}{{ block.settings.btn_text }} {% endif %}"
+                      {% endif %}
+                    >
+                  {%- else -%}
+                    {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                  {%- endif -%}
+                </div>
+                {% if block.settings.btn_text != blank %}
+                  <a
+                    href="{{ block.settings.btn_link }}"
+                    class="masonry-item__link leading-14 flex ai-end jc-center absolute inset-0"
+                  >
+                    <span
+                      class="btn btn--round btn--custom"
+                      style="--colorBtnPrimary: {{ section.settings.button_background }};--colorBtnPrimaryText: {{ section.settings.button_color }};"
+                    >
+                      {{- block.settings.btn_text -}}
+                    </span>
+                  </a>
+                {% endif %}
+              </div>
+            {%- endfor -%}
+          </div>
+        {% endif %}
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.masonry.name",
+  "class": "index-section medium-down--sm-space-top-index-section",
+  "disabled_on": {
+    "groups": ["footer", "header", "custom.popups"]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "options": [
+        {
+          "value": "full-width",
+          "label": "t:sections.all.section_width.options__1"
+        },
+        {
+          "value": "page-width",
+          "label": "t:sections.all.section_width.options__2"
+        },
+        {
+          "value": "customize_width",
+          "label": "t:sections.all.section_width.options__3"
+        }
+      ],
+      "default": "page-width",
+      "label": "t:sections.all.section_width.label"
+    },
+    {
+      "type": "range",
+      "id": "customize_width",
+      "min": 1000,
+      "max": 1800,
+      "step": 10,
+      "default": 1800,
+      "unit": "px",
+      "label": "t:sections.all.customize_width.label"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.all.heading.label",
+      "default": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "t:sections.all.description.label",
+      "default": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.masonry.settings.header.content"
+    },
+    {
+      "type": "text",
+      "id": "odd_row_height",
+      "default": "375",
+      "label": "t:sections.masonry.settings.label__1"
+    },
+    {
+      "type": "text",
+      "id": "even_row_height",
+      "default": "225",
+      "label": "t:sections.masonry.settings.label__2"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.button.header"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "t:sections.all.button.label__2",
+      "default": "#1B2A57"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "t:sections.all.button.label__1",
+      "default": "#fff"
+    },
+    {
+      "type": "checkbox",
+      "id": "carousel_mobile",
+      "label": "Carousel mobile",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image",
+      "limit": 8,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_mobile",
+          "label": "Image mobile"
+        },
+        {
+          "type": "header",
+          "content": "Button"
+        },
+        {
+          "type": "text",
+          "label": "Text",
+          "id": "btn_text",
+          "default": "Button text"
+        },
+        {
+          "type": "url",
+          "label": "Link",
+          "id": "btn_link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.masonry.presets.name",
+      "blocks": [
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

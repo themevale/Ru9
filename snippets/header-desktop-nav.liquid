@@ -1,0 +1,299 @@
+{%- liquid
+  unless limit
+    assign limit = main_menu.links.size
+  endunless
+  unless offset
+    assign offset = 0
+  endunless
+-%}
+
+<ul
+  class="site-nav site-navigation medium-down--hide"
+>
+  {%- for link in main_menu.links limit: limit offset: offset -%}
+    {%- liquid
+      assign active_sale_lv1  = section.settings.active_sale_lv1 | escape | downcase | split: "," | strip | handle
+      assign active_sale_lv2  = section.settings.active_sale_lv2 | escape | downcase | split: "," | strip | handle
+      assign active_sale_lv3  = section.settings.active_sale_lv3 | escape | downcase | split: "," | strip | handle
+      
+      assign select_title_first_lv1 = section.settings.select_title_first_lv1 | escape | downcase | split: "," | strip | handle
+      assign select_title_first_lv2 = section.settings.select_title_first_lv2 | escape | downcase | split: "," | strip | handle
+      assign select_title_first_lv3 = section.settings.select_title_first_lv3 | escape | downcase | split: "," | strip | handle
+      assign text_on_label_1 = section.settings.text_on_label_1
+      
+      assign select_title_second_lv1 = section.settings.select_title_second_lv1 | escape | downcase | split: "," | strip | handle
+      assign select_title_second_lv2 = section.settings.select_title_second_lv2 | escape | downcase | split: "," | strip | handle
+      assign select_title_second_lv3 = section.settings.select_title_second_lv3 | escape | downcase | split: "," | strip | handle
+      assign text_on_label_2 = section.settings.text_on_label_2
+
+      assign select_title_thrid_lv1 = section.settings.select_title_thrid_lv1 | escape | downcase | split: "," | strip | handle
+      assign select_title_thrid_lv2 = section.settings.select_title_thrid_lv2 | escape | downcase | split: "," | strip | handle
+      assign select_title_thrid_lv3 = section.settings.select_title_thrid_lv3 | escape | downcase | split: "," | strip | handle
+      assign text_on_label_3 = section.settings.text_on_label_3
+
+      assign title = link.title | escape | downcase | split: "," | strip | handle
+      
+      assign has_dropdown = false
+      assign is_megamenu = false
+      if link.links != blank
+        assign has_dropdown = true
+        if link.levels > 1
+          assign is_megamenu = true
+        endif
+      endif
+    -%}
+
+    <li class="site-nav__item site-nav__expanded-item{% if has_dropdown %} site-nav--has-dropdown{% endif %}{% if is_megamenu %} site-nav--is-megamenu{% endif %}">
+      {% if is_megamenu or has_dropdown %}
+        <details
+          data-hover="{{ hover_menu }}"
+          id="site-nav-item--{{ forloop.index }}"
+          class="site-nav__details"
+        >
+          <summary
+            data-link="{{ link.url }}"
+            aria-expanded="false"
+            aria-controls="site-nav-item--{{ forloop.index }}"
+            class="site-nav__link site-nav__link--hover{% if has_dropdown %} site-nav__link--has-dropdown{% endif %}{% if active_sale_lv1 contains title %} is-sale{% endif %}"
+            style="{% if active_sale_lv1 contains title %}--active-sale-clr: {{ section.settings.color_active_sale.rgb }};{% endif %}"
+          >
+            {{ link.title }}
+            {%- if select_title_first_lv1 contains title -%}
+              <span class="badge-label text-xs leading-none" style="--clr-on-label: {{ section.settings.color_label_1.rgb }}; --bg-on-label: {{ section.settings.background_label_1 }};">{{ text_on_label_1 }}</span>
+            {%- elsif select_title_second_lv1 contains title -%}
+              <span class="badge-label text-xs leading-none" style="--clr-on-label: {{ section.settings.color_label_2.rgb }}; --bg-on-label: {{ section.settings.background_label_2 }};">{{ text_on_label_2 }}</span>
+            {%- elsif select_title_thrid_lv1 contains title -%}
+              <span class="badge-label text-xs leading-none" style="--clr-on-label: {{ section.settings.color_label_3.rgb }}; --bg-on-label: {{ section.settings.background_label_3 }};">{{ text_on_label_3 }}</span>
+            {%- endif -%}
+          </summary>
+      {% else %}
+        <a
+          href="{{ link.url }}"
+          class="site-nav__link site-nav__link--hover{% if has_dropdown %} site-nav__link--has-dropdown{% endif %}{% if active_sale_lv1 contains title %} is-sale{% endif %}"
+          style="{% if active_sale_lv1 contains title %}--active-sale-clr: {{ section.settings.color_active_sale.rgb }};{% endif %}"
+        >
+          {{ link.title }}
+          {%- if select_title_first_lv1 contains title -%}
+            <span class="badge-label text-xs leading-none" style="--clr-on-label: {{ section.settings.color_label_1.rgb }}; --bg-on-label: {{ section.settings.background_label_1 }};">{{ text_on_label_1 }}</span>
+          {%- elsif select_title_second_lv1 contains title -%}
+            <span class="badge-label text-xs leading-none" style="--clr-on-label: {{ section.settings.color_label_2.rgb }}; --bg-on-label: {{ section.settings.background_label_2 }};">{{ text_on_label_2 }}</span>
+          {%- elsif select_title_thrid_lv1 contains title -%}
+            <span class="badge-label text-xs leading-none" style="--clr-on-label: {{ section.settings.color_label_3.rgb }}; --bg-on-label: {{ section.settings.background_label_3 }};">{{ text_on_label_3 }}</span>
+          {%- endif -%}
+        </a>
+      {% endif %}
+        {%- if is_megamenu -%}
+          {%- assign previous_column_type = '' -%}
+          {%- assign animation_column = 1 -%}
+
+          <div class="site-nav__dropdown megamenu text-left">
+            <div class="page-width gap">
+              <div class="megamenu__content">
+                <div class="grid">
+                  <div class="grid__item medium-up--two-sixths appear-animation appear-delay-{{ animation_column }}">
+                    {%- assign animation_column = animation_column | plus: 1 -%}
+
+                    {%- for childlink in link.links -%}
+                      {%- liquid
+                        assign create_new_column = false
+
+                        if childlink.levels > 0 and forloop.index != 1
+                          assign create_new_column = true
+                        endif
+
+                        if childlink.levels == 0 and previous_column_type == 'full'
+                          assign create_new_column = true
+                        endif
+
+                        assign childtitle = childlink.title | escape | downcase | split: "," | strip | handle
+                      -%}
+
+                      {%- if create_new_column -%}
+                        </div><div class="grid__item medium-up--one-fifth appear-animation appear-delay-{{ animation_column }}">
+                        {%- assign animation_column = animation_column | plus: 1 -%}
+                      {%- endif -%}
+
+                      {% comment %} {%- if childlink.levels > 0 and childlink.url contains '/collections/' -%}
+                        {%- if collections[childlink.object.handle].image != blank and section.settings.mega_menu_images -%}
+                          <a href="{{ childlink.url }}">
+                            <div class="svg-mask svg-mask--landscape">
+                            {%- render 'image-element',
+                              img: collections[childlink.object.handle].image,
+                              sizeVariable: '20vw',
+                              alt: collections[childlink.object.handle].title,
+                              classes: 'megamenu__collection-image',
+                            -%}
+                            </div>
+                          </a>
+                        {%- endif -%}
+                      {%- endif -%} {% endcomment %}
+
+                      <div class="f-bold">
+                        <a href="{{ childlink.url }}" class="site-nav__dropdown-link {% if active_sale_lv2 contains childtitle %} is-sale{% endif %} site-nav__dropdown-link--top-level"style="{% if active_sale_lv2 contains childtitle %}--active-sale-clr: {{ section.settings.color_active_sale.rgb }};{% endif %}">
+                          {{ childlink.title }}
+                          {%- if select_title_first_lv2 contains childtitle -%}
+                            <span class="badge-label text-xs leading-none" style="--clr-on-label: {{ section.settings.color_label_1.rgb }}; --bg-on-label: {{ section.settings.background_label_1 }};">{{ text_on_label_1 }}</span>
+                          {%- elsif select_title_second_lv2 contains childtitle -%}
+                            <span class="badge-label text-xs leading-none" style="--clr-on-label: {{ section.settings.color_label_2.rgb }}; --bg-on-label: {{ section.settings.background_label_2 }};">{{ text_on_label_2 }}</span>
+                          {%- elsif select_title_thrid_lv2 contains childtitle -%}
+                            <span class="badge-label text-xs leading-none" style="--clr-on-label: {{ section.settings.color_label_3.rgb }}; --bg-on-label: {{ section.settings.background_label_3 }};">{{ text_on_label_3 }}</span>
+                          {%- endif -%}
+                        </a>
+                      </div>
+
+                      {%- liquid
+                        if childlink.levels > 0
+                          assign previous_column_type = 'full'
+                        else
+                          assign previous_column_type = 'single'
+                        endif
+                      -%}
+
+                      {%- for grandchildlink in childlink.links -%}
+                        {% assign grandchildtitle = grandchildlink.title | escape | downcase | split: "," | strip | handle %}
+                        <div>
+                          <a href="{{ grandchildlink.url }}" class="site-nav__dropdown-link flex ai-center gap-x{% if active_sale_lv3 contains grandchildtitle %} is-sale{% endif %}"style="{% if active_sale_lv3 contains grandchildtitle %}--active-sale-clr: {{ section.settings.color_active_sale.rgb }};{% endif %}">
+                            {%- if grandchildlink.object.featured_media and section.settings.mega_menu_images -%}
+                              <div class="aspect-ratio shrink-0" style="--width:1;--height:1">
+                                {%- render 'image-element',
+                                  img: grandchildlink.object.featured_media,
+                                  sizeVariable: '80px'
+                                  alt: grandchildlink.title,
+                                  classes: 'megamenu__collection-image block',
+                                -%}
+                              </div>
+                            {%- endif -%}
+                            <span class="txt text-lg">{{ grandchildlink.title }}</span>
+                            {%- if select_title_first_lv3 contains grandchildtitle -%}
+                              <span class="badge-label text-xs leading-none" style="--clr-on-label: {{ section.settings.color_label_1.rgb }}; --bg-on-label: {{ section.settings.background_label_1 }};">{{ text_on_label_1 }}</span>
+                            {%- elsif select_title_second_lv3 contains grandchildtitle -%}
+                              <span class="badge-label text-xs leading-none" style="--clr-on-label: {{ section.settings.color_label_2.rgb }}; --bg-on-label: {{ section.settings.background_label_2 }};">{{ text_on_label_2 }}</span>
+                            {%- elsif select_title_thrid_lv3 contains grandchildtitle -%}
+                              <span class="badge-label text-xs leading-none" style="--clr-on-label: {{ section.settings.color_label_3.rgb }}; --bg-on-label: {{ section.settings.background_label_3 }};">{{ text_on_label_3 }}</span>
+                            {%- endif -%}
+                          </a>
+                        </div>
+                      {%- endfor -%}
+                    {%- endfor -%}
+                  </div>
+                </div>
+              </div>
+              <div class="megamenu__banner appear-animation appear-delay-{{ animation_column }}">
+                {%assign index = forloop.index %}
+                {% for block in section.blocks %}
+                  {%assign position = block.settings.position | plus: 0 %}
+                  {% if block.type == 'menu_banner' and position == index %}
+                    <a href="{{block.settings.url}}">
+                      <div class="aspect-ratio">
+                        <img src="{{ block.settings.image | img_url: 'master'}}" loading="lazy" alt="{{block.settings.image.alt }}" />
+                      </div>
+                      {{block.settings.title}}
+                    </a>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+            <div class="megamenu__bottom">
+              <div class="page-width">
+                <div class="megamenu__links flex-center py-base border-t">
+                  {%- if section.settings.mega_menu_first_links_text != blank or section.settings.mega_menu_first_links_icon -%}
+                    <a href="{{ section.settings.mega_menu_first_links_url }}" class="megamenu__links-item flex ai-center gap-x-xs">
+                      {%- if section.settings.mega_menu_first_links_icon != blank -%}
+                        <span class="megamenu__links-icon">{{ section.settings.mega_menu_first_links_icon }}</span>
+                      {%- endif -%}
+                      {%- if section.settings.mega_menu_first_links_text != blank -%}
+                        <span class="megamenu__links-text">{{ section.settings.mega_menu_first_links_text }}</span>
+                      {%- endif -%}
+                    </a>
+                  {%- endif -%}
+                  {%- if section.settings.mega_menu_second_links_text != blank or section.settings.mega_menu_second_links_icon -%}
+                    <a href="{{ section.settings.mega_menu_second_links_url }}" class="megamenu__links-item flex ai-center gap-x-xs">
+                      {%- if section.settings.mega_menu_second_links_icon != blank -%}
+                        <span class="megamenu__links-icon">{{ section.settings.mega_menu_second_links_icon }}</span>
+                      {%- endif -%}
+                      {%- if section.settings.mega_menu_second_links_text != blank -%}
+                        <span class="megamenu__links-text">{{ section.settings.mega_menu_second_links_text }}</span>
+                      {%- endif -%}
+                    </a>
+                  {%- endif -%}
+                </div>
+              </div>
+            </div>
+            <div class="megamenu_promotion">
+              <div class="promotion_container page-width">
+                <div class="promotions flex-center">
+                  {%- assign block_promotion = section.blocks | where: "type", "header_promotion" -%}
+                      {%- if block_promotion.size > 0 -%}
+                          {%- for block in block_promotion -%}
+                              <div class="promotion flex ai-center text-xs">
+                                {%- if block.settings.promotion_icon != blank -%}
+                                  <div class="promotion_icon">
+                                    {{ block.settings.promotion_icon }}
+                                  </div>
+                                {%- endif -%}
+                                {%- if block.settings.promotion_text != blank -%}
+                                  <div class="promotion_text">
+                                    {{ block.settings.promotion_text }}
+                                  </div>
+                                {%- endif -%}
+                              </div>
+                          {%- endfor -%}
+                      {%- endif -%}
+                  </div>
+              </div>
+            </div>
+          </div>
+        {%- elsif has_dropdown -%}
+          <ul class="site-nav__dropdown text-left">
+            {%- for childlink in link.links -%}
+              {%- liquid
+                assign has_sub_dropdown = false
+                assign childtitle = childlink.title | escape | downcase | split: "," | strip | handle
+                if childlink.links != blank
+                  assign has_sub_dropdown = true
+                endif
+              -%}
+
+              <li class="{% if has_sub_dropdown %} site-nav__deep-dropdown-trigger{% endif %}">
+                <a href="{{ childlink.url }}" class="site-nav__dropdown-link site-nav__dropdown-link--second-level{% if has_sub_dropdown %} site-nav__dropdown-link--has-children{% endif %}{% if active_sale_lv2 contains childtitle %} is-sale{% endif %}" style="{% if active_sale_lv2 contains childtitle %}--active-sale-clr: {{ section.settings.color_active_sale.rgb }};{% endif %}">
+                  {{ childlink.title | escape }}
+                  {%- if has_sub_dropdown -%}
+                    <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon--wide icon-chevron-down" viewBox="0 0 28 16"><path d="m1.57 1.59 12.76 12.77L27.1 1.59" stroke-width="2" stroke="#000" fill="none"/></svg>
+                  {%- endif -%}
+                  {%- if select_title_first_lv2 contains childtitle -%}
+                    <span class="badge-label text-xs leading-none" style="--clr-on-label: {{ section.settings.color_label_1.rgb }}; --bg-on-label: {{ section.settings.background_label_1 }};">{{ text_on_label_1 }}</span>
+                  {%- elsif select_title_second_lv2 contains childtitle -%}
+                    <span class="badge-label text-xs leading-none" style="--clr-on-label: {{ section.settings.color_label_2.rgb }}; --bg-on-label: {{ section.settings.background_label_2 }};">{{ text_on_label_2 }}</span>
+                  {%- elsif select_title_thrid_lv2 contains childtitle -%}
+                    <span class="badge-label text-xs leading-none" style="--clr-on-label: {{ section.settings.color_label_3.rgb }}; --bg-on-label: {{ section.settings.background_label_3 }};">{{ text_on_label_3 }}</span>
+                  {%- endif -%}
+                </a>
+                {%- if has_sub_dropdown -%}
+                  <ul class="site-nav__deep-dropdown">
+                    {%- for grandchildlink in childlink.links -%}
+                      {% assign grandchildtitle = grandchildlink.title | escape | downcase | split: "," | strip | handle %}
+                      <li>
+                        <a href="{{ grandchildlink.url }}" class="site-nav__dropdown-link{% if active_sale_lv3 contains grandchildtitle %} is-sale{% endif %}" style="{% if active_sale_lv3 contains grandchildtitle %}--active-sale-clr: {{ section.settings.color_active_sale.rgb }};{% endif %}">
+                          {{ grandchildlink.title | escape }}
+                          {%- if select_title_first_lv3 contains grandchildtitle -%}
+                            <span class="badge-label text-xs leading-none" style="--clr-on-label: {{ section.settings.color_label_1.rgb }}; --bg-on-label: {{ section.settings.background_label_1 }};">{{ text_on_label_1 }}</span>
+                          {%- elsif select_title_second_lv3 contains grandchildtitle -%}
+                            <span class="badge-label text-xs leading-none" style="--clr-on-label: {{ section.settings.color_label_2.rgb }}; --bg-on-label: {{ section.settings.background_label_2 }};">{{ text_on_label_2 }}</span>
+                          {%- elsif select_title_thrid_lv3 contains grandchildtitle -%}
+                            <span class="badge-label text-xs leading-none" style="--clr-on-label: {{ section.settings.color_label_3.rgb }}; --bg-on-label: {{ section.settings.background_label_3 }};">{{ text_on_label_3 }}</span>
+                          {%- endif -%}
+                        </a>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      {% if is_megamenu or has_dropdown %}
+        </details>
+      {% endif %}
+    </li>
+  {%- endfor -%}
+</ul>

@@ -1,0 +1,344 @@
+<div data-section-id="{{ section.id }}" data-section-type="f-col-tab-section">
+  {% liquid
+    if section.settings.section_width != 'page-width'
+      if section.settings.section_width == 'full-width'
+        assign page_width = '100%'
+      endif
+      if section.settings.section_width == 'customize_width'
+        assign page_width = section.settings.customize_width | plus: 80 | append: 'px'
+      endif
+    endif
+  %}
+  <div class="f-col-tab">
+    <div
+      class="page-width"
+      style="{% if section.settings.section_width != 'page-width' %}--page-width: {{ page_width }}{% endif %}"
+    >
+      <div class="section-header">
+        <h2 class="section-header__title">{{ section.settings.title }}</h2>
+        <div class="rte text-lg">{{ section.settings.description }}</div>
+      </div>
+    </div>
+    <div
+      class="page-width page-width-content"
+      style="{% if section.settings.section_width != 'page-width' %}--page-width: {{ page_width }}{% endif %}"
+    >
+      <div class="f-col-tab__content">
+        <theme-tab>
+          <div class="tab__item tab__panel">
+            <ul class="tab__list inline-list jc-center gap-x-sm">
+              {%- for block in section.blocks -%}
+                <li class="tab__list-item{% if forloop.index == 1 %} is-active{% endif %}">
+                  <span
+                    class="btn tab__item-panel"
+                    id="Tab-{{ block.id }}"
+                    style="--colorBtnPrimaryText: {{ block.settings.color_tab_name }}; --colorBtnPrimary: {{ block.settings.background_tab_name }};--background-inactive: {{ block.settings.background_tab_name | color_modify: "alpha", 0.3 }};"
+                  >
+                    {{ block.settings.tab_name }}
+                    {%- if block.settings.tab_label != blank -%}
+                      <span class="badge badge--sm">{{ block.settings.tab_label }}</span>
+                    {%- endif -%}
+                  </span>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+          <div class="tab__item tab__content relative">
+            {%- for block in section.blocks -%}
+              <div
+                class="tab__content-item tab__content-slider grid{% if forloop.index == 1 %} is-active{% endif %}"
+                id="Tab-content-{{ block.id }}"
+                data-tab-id="Tab-{{ block.id }}"
+              >
+                {% for index in (1..4) %}
+                  {%- capture product_text -%}product_{{ index }}{%- endcapture -%}
+                  {%- capture labels_left_text -%}label_left_{{ index }}{%- endcapture -%}
+                  {%- capture labels_right_text -%}label_right_{{ index }}{%- endcapture -%}
+                  {%- capture color_labels_left_text -%}color_label_left_{{ index }}{%- endcapture -%}
+                  {%- capture color_labels_right_text -%}color_label_right_{{ index }}{%- endcapture -%}
+                  {%- capture background_labels_left_text -%}background_label_left_{{ index }}{%- endcapture -%}
+                  {%- capture background_labels_right_text -%}background_label_right_{{ index }}{%- endcapture -%}
+                  {%- liquid
+                    assign product_index = block.settings[product_text]
+                    assign labels_left_list = block.settings[labels_left_text]
+                    assign labels_right_list = block.settings[labels_right_text]
+                    assign color_labels_left = block.settings[color_labels_left_text]
+                    assign color_labels_right = block.settings[color_labels_right_text]
+                    assign background_labels_left = block.settings[background_labels_left_text]
+                    assign background_labels_right = block.settings[background_labels_right_text]
+                  -%}
+                  {%- if product_index != blank -%}
+                    {%- render 'product-grid-item',
+                      product: product_index,
+                      has_custom_label: true,
+                      custom_label_left: labels_left_list,
+                      custom_color_label_left: color_labels_left,
+                      custom_background_label_left: background_labels_left,
+                      custom_label_right: labels_right_list,
+                      custom_color_label_right: color_labels_right,
+                      custom_background_label_right: background_labels_right,
+                      per_row: 3,
+                      quick_shop_enable: settings.quick_shop_enable
+                    -%}
+                  {%- endif -%}
+                {% endfor %}
+              </div>
+            {%- endfor -%}
+          </div>
+        </theme-tab>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.featured-collection-tab.name",
+  "class": "index-section",
+  "disabled_on": {
+    "groups": ["footer", "header", "custom.popups"]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "options": [
+        {
+          "value": "full-width",
+          "label": "t:sections.all.section_width.options__1"
+        },
+        {
+          "value": "page-width",
+          "label": "t:sections.all.section_width.options__2"
+        },
+        {
+          "value": "customize_width",
+          "label": "t:sections.all.section_width.options__3"
+        }
+      ],
+      "default": "page-width",
+      "label": "t:sections.all.section_width.label"
+    },
+    {
+      "type": "range",
+      "id": "customize_width",
+      "min": 1000,
+      "max": 1800,
+      "step": 10,
+      "default": 1800,
+      "unit": "px",
+      "label": "t:sections.all.customize_width.label"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.all.heading.label",
+      "default": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "t:sections.all.description.label",
+      "default": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "t:sections.featured-collection-tab.blocks.tab.name",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "text",
+          "id": "tab_name",
+          "default": "Tab name",
+          "label": "t:sections.all.tab_name.label"
+        },
+        {
+          "type": "color",
+          "id": "color_tab_name",
+          "label": "t:sections.featured-collection-tab.blocks.tab.colors.label__1",
+          "default": "#fff"
+        },
+        {
+          "type": "color",
+          "id": "background_tab_name",
+          "label": "t:sections.featured-collection-tab.blocks.tab.colors.label__2",
+          "default": "#2960AD"
+        },
+        {
+          "type": "text",
+          "id": "tab_label",
+          "label": "t:sections.all.tab_name.label__1"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.all.product.label"
+        },
+        {
+          "type": "paragraph",
+          "content": "t:sections.featured-collection-tab.blocks.products.label__1"
+        },
+        {
+          "type": "product",
+          "id": "product_1",
+          "label": "t:sections.all.product.label"
+        },
+        {
+          "type": "text",
+          "id": "label_left_1",
+          "label": "t:sections.featured-collection-tab.blocks.products.label__5"
+        },
+        {
+          "type": "color",
+          "id": "color_label_left_1",
+          "label": "t:sections.all.colors.label__1"
+        },
+        {
+          "type": "color",
+          "id": "background_label_left_1",
+          "label": "t:sections.all.colors.label__2"
+        },
+        {
+          "type": "text",
+          "id": "label_right_1",
+          "label": "t:sections.featured-collection-tab.blocks.products.label__6"
+        },
+        {
+          "type": "color",
+          "id": "color_label_right_1",
+          "label": "t:sections.all.colors.label__3"
+        },
+        {
+          "type": "color",
+          "id": "background_label_right_1",
+          "label": "t:sections.all.colors.label__2"
+        },
+        {
+          "type": "paragraph",
+          "content": "t:sections.featured-collection-tab.blocks.products.label__2"
+        },
+        {
+          "type": "product",
+          "id": "product_2",
+          "label": "t:sections.all.product.label"
+        },
+        {
+          "type": "text",
+          "id": "label_left_2",
+          "label": "t:sections.featured-collection-tab.blocks.products.label__5"
+        },
+        {
+          "type": "color",
+          "id": "color_label_left_2",
+          "label": "t:sections.all.colors.label__3"
+        },
+        {
+          "type": "color",
+          "id": "background_label_left_2",
+          "label": "t:sections.all.colors.label__2"
+        },
+        {
+          "type": "text",
+          "id": "label_right_2",
+          "label": "t:sections.featured-collection-tab.blocks.products.label__6"
+        },
+        {
+          "type": "color",
+          "id": "color_label_right_2",
+          "label": "t:sections.all.colors.label__3"
+        },
+        {
+          "type": "color",
+          "id": "background_label_right_2",
+          "label": "t:sections.all.colors.label__2"
+        },
+        {
+          "type": "paragraph",
+          "content": "t:sections.featured-collection-tab.blocks.products.label__3"
+        },
+        {
+          "type": "product",
+          "id": "product_3",
+          "label": "t:sections.all.product.label"
+        },
+        {
+          "type": "text",
+          "id": "label_left_3",
+          "label": "t:sections.featured-collection-tab.blocks.products.label__5"
+        },
+        {
+          "type": "color",
+          "id": "color_label_left_3",
+          "label": "t:sections.all.colors.label__3"
+        },
+        {
+          "type": "color",
+          "id": "background_label_left_3",
+          "label": "t:sections.all.colors.label__2"
+        },
+        {
+          "type": "text",
+          "id": "label_right_3",
+          "label": "t:sections.featured-collection-tab.blocks.products.label__6"
+        },
+        {
+          "type": "color",
+          "id": "color_label_right_3",
+          "label": "t:sections.all.colors.label__3"
+        },
+        {
+          "type": "color",
+          "id": "background_label_right_3",
+          "label": "t:sections.all.colors.label__2"
+        },
+        {
+          "type": "paragraph",
+          "content": "t:sections.featured-collection-tab.blocks.products.label__4"
+        },
+        {
+          "type": "product",
+          "id": "product_4",
+          "label": "t:sections.all.product.label"
+        },
+        {
+          "type": "text",
+          "id": "label_left_4",
+          "label": "t:sections.featured-collection-tab.blocks.products.label__5"
+        },
+        {
+          "type": "color",
+          "id": "color_label_left_4",
+          "label": "t:sections.all.colors.label__3"
+        },
+        {
+          "type": "color",
+          "id": "background_label_left_4",
+          "label": "t:sections.all.colors.label__2"
+        },
+        {
+          "type": "text",
+          "id": "label_right_4",
+          "label": "t:sections.featured-collection-tab.blocks.products.label__6"
+        },
+        {
+          "type": "color",
+          "id": "color_label_right_4",
+          "label": "t:sections.all.colors.label__3"
+        },
+        {
+          "type": "color",
+          "id": "background_label_right_4",
+          "label": "t:sections.all.colors.label__2"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.featured-collection-tab.presets.name",
+      "blocks": []
+    }
+  ]
+}
+{% endschema %}
