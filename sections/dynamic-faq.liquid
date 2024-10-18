@@ -1,0 +1,320 @@
+{%- render 'section_css' -%}
+
+{% style %}
+  @media screen and (min-width: 960px) {
+    .dynamic--brand-w > * {
+      padding-inline: 24px;
+    }
+  }
+  .dynamic--brand-w .section-padding {
+    padding-bottom: 0;
+  }
+  .dynamic--brand .collapsible-trigger__icon--circle svg {
+    color: #fff;
+    fill: #fff;
+    display: block;
+  }
+  .dynamic--brand .collapsible-trigger--inline .collapsible-trigger__icon {
+    width: 11px;
+    height: 11px;
+    display: flex;
+    align-items: center;
+    left: 0;
+    right: auto;
+  }
+  .dynamic--brand-w .question .collapsible-trigger.is-open .collapsible-trigger__icon--open {
+    display: none !important;
+  }
+  .dynamic--brand-w .question .collapsible-trigger:not(.is-open) .collapsible-trigger__icon--close {
+    display: none !important;
+  }
+  .dynamic--brand .page-width.dynamic--brand-w .collapsible-trigger--inline {
+    width: 100%;
+    max-width: 100%;
+    color: #1c2c58;
+    margin-bottom: 7px;
+  }
+  .dynamic--brand .collapsible-trigger--inline {
+    padding: 24px 0 24px 22px;
+    margin: 0;
+    border: none;
+    font-weight: 500;
+    font-size: 17px;
+    line-height: 1.2;
+    border-top: 1px solid;
+    border-color: var(--colorBorder);
+    border-bottom: 0;
+    border-radius: 0;
+  }
+  #readmore_faqs {
+    line-height: 1;
+    margin-top: 24px;
+    border: 1px solid #d1d5db;
+    padding: 16px 40px;
+    border-radius: 46px;
+    transition: letter-spacing 0.3s;
+  }
+  #readmore_faqs:hover {
+    letter-spacing: 0.05em;
+  }
+  #readmore_faqs .icon {
+    width: 10px;
+    margin-left: 12px;
+  }
+  @media screen and (min-width: 769px) {
+    .dynamic--brand .collapsible-trigger--inline .collapsible-trigger__icon {
+      background: transparent;
+    }
+
+    .dynamic--brand .rte.collapsible-content__inner--faq {
+      color: #717070;
+      font-size: 17px;
+      padding-inline: 24px;
+    }
+    .dynamic--brand .collapsible-trigger__icon--circle .icon {
+      fill: #717070;
+      width: 32px;
+      height: 32px;
+    }
+  }
+  @media screen and (max-width: 768px) {
+    .dynamic--brand .collapsible-trigger--inline .collapsible-trigger__icon {
+      background: transparent;
+    }
+    .dynamic--brand .collapsible-trigger--inline {
+      margin: 0;
+      border: none;
+      font-weight: 500;
+      font-size: 18px;
+      border-top: 1px solid;
+      border-color: var(--colorBorder);
+      border-bottom: 0;
+      border-radius: 0;
+      padding-block: 20px;
+      margin-bottom: 0;
+    }
+    .dynamic--brand .rte.collapsible-content__inner--faq {
+      color: #717070;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 24px;
+    }
+    .dynamic--brand .collapsible-trigger__icon--circle .icon {
+      fill: #717070 !important;
+      width: 12px;
+      height: 12px;
+    }
+    #readmore_faqs {
+      margin-top: 13px;
+    }
+    .view_all svg {
+      width: 9px;
+      margin: 0;
+    }
+  }
+{% endstyle %}
+<div
+  class="nt_se_{{ section.id }} dynamic--brand"
+  {% if section.settings.enable_anchor_link %}
+    data-anchor-link="true"
+    data-anchor-link-text="{{ section.settings.anchor_link_text }}"
+    id="{{ section.settings.anchor_link_text | downcase |  replace: ' ', '-' }}"
+  {% endif %}
+>
+  <div class="page-width dynamic--brand-w">
+    {%- if section.settings.divider -%}<div class="section--divider section-padding">{%- endif -%}
+    {%- if section.settings.title != blank -%}
+      <header class="section-header text-{{ section.settings.text_alignment }}">
+        <p class="page-heading text-2xl f-smb">
+          {{ section.settings.title | escape }}
+        </p>
+      </header>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      {% assign count = 0 %}
+      {%- for block in section.blocks -%}
+        {% if block.settings.title != blank %}
+          {% assign count = count | plus: 1 %}
+        {% endif %}
+      {%- endfor -%}
+
+      {% if section.settings.use_metafield -%}
+        {% for i in (1..section.settings.metafield_limit) -%}
+          {% capture title_metafield %}ask_{{ i }}{% endcapture %}
+          {% capture text_metafield %}answer_{{ i }}{% endcapture %}
+          {% liquid
+            assign obj = null
+            if template contains 'product'
+              assign obj = product
+            elsif template contains 'collection'
+              assign obj = collection
+            elsif template contains 'page'
+              assign obj = page
+            elsif template contains 'blog'
+              assign obj = blog
+            elsif template contains 'article'
+              assign obj = article
+            endif
+          %}
+
+          {% liquid
+            assign title = obj.metafields.custom[title_metafield]
+            assign rich_text = obj.metafields.custom[text_metafield].value.children
+            assign id = obj.handle | append: '-' | append: forloop.index
+          %}
+          {% render 'faq-item', title: title, use_metafield: true, text: rich_text, id: id %}
+        {% endfor -%}
+      {% else %}
+        {%- for block in section.blocks -%}
+          {% liquid
+            assign title = block.settings.title
+            assign text = block.settings.text
+            assign id = block.id
+          %}
+          {% render 'faq-item', title: title, text: text, id: id %}
+        {%- endfor -%}
+      {% endif %}
+
+      <div class="view_all t-center">
+        <a id="readmore_faqs" class="i-flex ai-center jc-center" href="{{ section.settings.link }}">
+          {{ section.settings.link_text }}
+          <svg class="icon" viewBox="0 0 100 100">
+            <path d="M 10,50 L 60,100 L 70,90 L 30,50  L 70,10 L 60,0 Z" class="arrow" transform="translate(100, 100) rotate(180) "></path>
+          </svg>
+        </a>
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size == 0 -%}
+      <div class="placeholder-noblocks">
+        {{ 'home_page.onboarding.no_content' | t }}
+      </div>
+    {%- endif -%}
+    {%- if section.settings.divider -%}</div>{%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Dynamic faq",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_anchor_link",
+      "label": "t:sections.featured-product.settings.anchor_links.label__1",
+      "default": false,
+      "info": "t:sections.featured-product.settings.anchor_links.info"
+    },
+    {
+      "type": "text",
+      "id": "anchor_link_text",
+      "label": "t:sections.featured-product.settings.anchor_links.label__2",
+      "info": "Example: FAQs"
+    },
+    {
+      "type": "text",
+      "id": "mg",
+      "label": "Margin",
+      "info": "Margin top, margin right, margin bottom, margin left. If you not use to blank",
+      "default": "50px,,20px,",
+      "placeholder": "50px,,50px,"
+    },
+    {
+      "type": "text",
+      "id": "pd",
+      "label": "Padding",
+      "info": "Padding top, padding right, padding bottom, padding left. If you not use to blank",
+      "placeholder": "50px,,50px,"
+    },
+    {
+      "type": "header",
+      "content": "== Design Mobile Options"
+    },
+    {
+      "type": "text",
+      "id": "mg_mb",
+      "label": "Margin",
+      "placeholder": "50px,,50px,"
+    },
+    {
+      "type": "text",
+      "id": "pd_mb",
+      "label": "Padding",
+      "placeholder": "50px,,50px,"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.faq.settings.title.label",
+      "default": "FAQs"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "t:sections.rich-text.blocks.button.settings.link.label"
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "t:sections.rich-text.blocks.button.settings.link_text.label",
+      "default": "Button"
+    },
+    {
+      "type": "text_alignment",
+      "id": "text_alignment",
+      "default": "center",
+      "label": "t:common.text_alignment.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_metafield",
+      "label": "Use Metafield"
+    },
+    {
+      "type": "text",
+      "id": "metafield_limit",
+      "label": "Limit Metafield"
+    },
+    {
+      "type": "checkbox",
+      "id": "divider",
+      "label": "t:sections.text-and-image.settings.divider.label",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "t:sections.faq.blocks.question.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.faq.blocks.question.settings.title.label",
+          "default": "Frequently asked question"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "t:sections.faq.blocks.question.settings.text.label",
+          "default": "<p>Use this text to answer questions in as much detail as possible for your customers.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Dynamic faq",
+      "blocks": [
+        {
+          "type": "question"
+        },
+        {
+          "type": "question"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

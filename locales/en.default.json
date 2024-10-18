@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "general": {
     "404": {
@@ -8,8 +17,15 @@
       "skip_to_content": "Skip to content",
       "close_modal": "Close (esc)",
       "close": "Close",
+      "unit_price_separator": "per",
+      "loading": "Loading...",
       "learn_more": "Learn more"
     },
+    "button": {
+      "read_more": "Read more",
+      "read_less": "Read less"
+    },
+    "continue_shopping": "Continue shopping",
     "meta": {
       "tags": "Tagged \"{{ tags }}\"",
       "page": "Page {{ page }}"
@@ -78,6 +94,12 @@
     },
     "language": {
       "dropdown_label": "Language"
+    },
+    "product": {
+      "price": "Price",
+      "or": "Or",
+      "installment_price": "Installment plan from",
+      "month_price": "VNĐ/Month"
     }
   },
   "sections": {
@@ -91,6 +113,13 @@
     "slideshow": {
       "play_slideshow": "Play slideshow",
       "pause_slideshow": "Pause slideshow"
+    },
+    "header": {
+      "announcement": "Announcement",
+      "menu": "Menu",
+      "go_to": "Go to {{ name }}",
+      "cart_count": { "one": "{{ count }} item", "other": "{{ count }} items" },
+      "cart_count_max": { "more": "99+" }
     }
   },
   "blogs": {
@@ -119,13 +148,24 @@
     "general": {
       "title": "Cart",
       "remove": "Remove",
+      "remove_title": "Remove {{ title }}",
       "note": "Order note",
+      "special_note": "Order special instructions",
       "subtotal": "Subtotal",
       "discounts": "Discounts",
       "shipping_at_checkout": "Shipping, taxes, and discount codes calculated at checkout.",
+      "duties_and_taxes_included_shipping_at_checkout_with_policy_html": "Duties and taxes included. Discounts and <a href=\"{{ link }}\">shipping</a> calculated at checkout.",
+      "duties_and_taxes_included_shipping_at_checkout_without_policy": "Duties and taxes included. Discounts and shipping calculated at checkout.",
+      "taxes_included_shipping_at_checkout_without_policy": "Taxes included. Discounts and shipping calculated at checkout.",
+      "taxes_included_shipping_at_checkout_with_policy_html": "Taxes included. Discounts and <a href=\"{{ link }}\">shipping</a> calculated at checkout.",
+      "duties_included_taxes_at_checkout_shipping_at_checkout_without_policy": "Duties included. Taxes, discounts and shipping calculated at checkout.",
+      "duties_included_taxes_at_checkout_shipping_at_checkout_with_policy_html": "Duties included. Taxes, discounts and <a href=\"{{ link }}\">shipping</a> calculated at checkout.",
+      "taxes_at_checkout_shipping_at_checkout_with_policy_html": "Taxes, discounts and <a href=\"{{ link }}\">shipping</a> calculated at checkout.",
+      "taxes_at_checkout_shipping_at_checkout_without_policy": "Taxes, discounts and shipping calculated at checkout.",
       "update": "Update cart",
       "checkout": "Check out",
       "empty": "Your cart is currently empty.",
+      "view_empty_cart": "View cart",
       "continue_browsing_html": "<a href='{{ url }}'>Continue shopping</a>",
       "close_cart": "Close cart",
       "reduce_quantity": "Reduce item quantity by one",
@@ -135,12 +175,23 @@
       "terms_confirm": "You must agree with the terms and conditions of sales to check out",
       "max_quantity": "You can only have {{ quantity }} of {{ title }} in your cart."
     },
+    "headings": {
+      "product": "Product",
+      "price": "Price",
+      "total": "Total",
+      "quantity": "Quantity",
+      "image": "Product image"
+    },
     "label": {
       "price": "Price",
       "price_from": "From",
       "price_to": "To",
       "quantity": "Quantity",
       "total": "Total"
+    },
+    "login": {
+      "title": "Have an account?",
+      "paragraph_html": "<a href=\"{{ link }}\" class=\"link underlined-link\">Log in</a> to check out faster."
     }
   },
   "collections": {
@@ -317,20 +368,46 @@
       "from_text_html": "from {{ price }}",
       "recent_products": "Recently viewed",
       "reviews": "Reviews",
-      "view_detail": "View detail"
+      "view_detail": "View detail",
+      "unit_price": "Unit price"
     },
     "product": {
       "description": "Description",
       "in_stock_label": "In stock, ready to ship",
+      "installment_price": "Installment plan from",
+      "month_price": "VNĐ/Month",
       "stock_label": {
         "one": "Low stock - {{ count }} item left",
         "other": "Low stock - {{ count }} items left"
       },
+      "value_unavailable": "{{ option_value }} - Unavailable",
+      "variant_sold_out_or_unavailable": "Variant sold out or unavailable",
       "new": "New",
       "sold_out": "Sold Out",
       "unavailable": "Unavailable",
-      "quantity": "Quantity",
+      "volume_pricing": {
+        "title": "Volume Pricing",
+        "note": "Volume pricing available",
+        "minimum": "{{ quantity }}+",
+        "price_at_each": "at {{ price }}/ea",
+        "price_range": "{{ minimum }} - {{ maximum }}"
+      },
+      "quantity": {
+        "label": "Quantity",
+        "input_label": "Quantity for {{ product }}",
+        "increase": "Increase quantity for {{ product }}",
+        "decrease": "Decrease quantity for {{ product }}",
+        "minimum_of": "Minimum of {{ quantity }}",
+        "maximum_of": "Maximum of {{ quantity }}",
+        "multiples_of": "Increments of {{ quantity }}",
+        "min_of": "Min {{ quantity }}",
+        "max_of": "Max {{ quantity }}",
+        "in_cart_html": "<span class=\"quantity-cart\">{{ quantity }}</span> in cart",
+        "note": "View quantity rules"
+      },
       "add_to_cart": "Add to cart",
+      "sticky_add_to_cart": "Add to cart",
+      "quick_add_to_cart": "Add",
       "preorder": "Pre-order",
       "include_taxes": "Tax included.",
       "shipping_policy_html": "<a href='{{ link }}'>Shipping</a> calculated at checkout.",
@@ -340,6 +417,9 @@
       "view_in_space": "View in your space",
       "view_in_space_label": "View in your space, loads item in augmented reality window"
     }
+  },
+  "templates": {
+    "cart": { "cart": "Cart" }
   },
   "store_availability": {
     "general": {

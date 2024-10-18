@@ -1,0 +1,48 @@
+{%- for block in section.blocks -%}
+  <style>
+    .{{ block.settings.category | handle }}{
+      background: {{ block.settings.background }};
+      border-color: {{ block.settings.background }}
+    }
+
+    .tag-item.{{ block.settings.category | handle }}{
+      background: {{ block.settings.background_darker }};
+    }
+  </style>
+{%- endfor -%}
+{%- schema -%}
+{
+  "name": "Blog category color",
+  "blocks": [
+    {
+      "type": "blog",
+      "name": "Blog category",
+      "settings": [
+        {
+          "type": "text",
+          "id": "category",
+          "label": "Category label"
+        },
+        {
+          "type": "color",
+          "id": "background",
+          "label": "Background"
+        },
+        {
+          "type": "color",
+          "id": "background_darker",
+          "label": "Background darker",
+          "default": "transparent",
+          "info": "Use for button in Blogpost page"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Blogs",
+      "name": "Blog category color"
+    }
+  ]
+}
+{%- endschema -%}

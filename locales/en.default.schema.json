@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "all": {
@@ -9,6 +18,12 @@
         "header": "Button",
         "label__1": "Background",
         "label__2": "Text"
+      },
+      "carousel": {
+        "header": {
+          "content": "Carousel",
+          "label__1": "Enable carousel layout"
+        }
       },
       "heading": {
         "label": "Heading"
@@ -666,7 +681,8 @@
           "name": "Tab",
           "colors": {
             "label__1": "Color tab name",
-            "label__2": "Background tab name"
+            "label__2": "Background tab name",
+            "label__3": "Background tab name inactive"
           }
         },
         "products": {
@@ -685,6 +701,11 @@
     "featured-product": {
       "name": "Featured product",
       "settings": {
+        "anchor_links": {
+          "label__1": "Enable anchor link",
+          "label__2": "Anchor link text",
+          "info": "Use for Product page"
+        },
         "featured_product": {
           "label": "Product"
         },
@@ -723,6 +744,13 @@
         },
         "product_zoom_enable": {
           "label": "Enable image zoom"
+        },
+        "thumbnail": {
+          "header": {
+            "content": "Thumbnail",
+            "label": "Enable thumbnail",
+            "info": "Only applies when enable 'Carousel layout'."
+          }
         },
         "thumbnail_position": {
           "label": "Thumbnail position",
@@ -1632,6 +1660,7 @@
           "label": "Show SKU"
         },
         "header_media": "Media",
+        "enable_sticky_navigation": "Enable sticky navigation",
         "content": "Learn more about [media types](https://help.shopify.com/en/manual/products/product-media)",
         "image_position": {
           "label": "Position",
@@ -4257,6 +4286,9 @@
         "label": "Hide price"
       }
     },
+    "carousel_modal": {
+      "name": "Carousel modal"
+    },
     "quantity_selector": {
       "name": "Quantity selector"
     },
@@ -4299,6 +4331,9 @@
       "settings": {
         "is_tab": {
           "label": "Show as tab"
+        },
+        "collapse_content": {
+          "label": "Collapse content"
         }
       }
     },
@@ -4326,6 +4361,9 @@
           "info": "Learn how to create inventory transfers [here](https://help.shopify.com/en/manual/products/inventory/transfers/create-transfer)"
         }
       }
+    },
+    "icon_with_text": {
+      "name": "Icon with text"
     },
     "sales_point": {
       "name": "Sales point",
@@ -4561,7 +4599,8 @@
       }
     },
     "text_alignment": {
-      "label": "Text alignment"
+      "label": "Text alignment",
+      "label__1": "Heading alignment"
     },
     "content_position": {
       "label": "Content position",

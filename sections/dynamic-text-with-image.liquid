@@ -1,0 +1,303 @@
+{%- if section.settings.divider -%}<div class="section--divider">{%- endif -%}
+
+{%- liquid
+  assign overlap_images = true
+  if section.settings.image != blank and section.settings.image2 == blank
+    assign overlap_images = false
+  endif
+
+  if section.settings.section_width != 'page-width'
+    if section.settings.section_width == 'full-width'
+      assign page_width = '100%'
+    endif
+    if section.settings.section_width == 'customize_width'
+      assign page_width = section.settings.customize_width | plus: 80 | append: 'px'
+    endif
+  endif
+-%}
+<div
+  class=" nt_se_{{section.id}}"
+  data-section-id="{{ section.id }}"
+  data-section-type="dynamic-image-with-text"
+>
+  <div class="index-section dynamic-image-with-text">
+    <div
+      class="page-width"
+      style="{% if section.settings.section_width != 'page-width' %}--page-width: {{ page_width }}{% endif %}"
+    >
+      <div class="section-header">
+        {% if section.settings.title != blank %}
+          <h2 class="section-header__title text-2xl page-heading m-0">{{ section.settings.title }}</h2>
+        {% endif %}
+        {% if section.settings.description != blank %}
+          <div class="rte page-desc">{{ section.settings.description }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div
+      class="page-width feature-row-wrapper"
+      id="dynamic-image-with-text-{{ section.id }}"
+      style="{% if section.settings.section_width != 'page-width' %}--page-width: {{ page_width }}{% endif %}"
+    >
+      {%- if section.blocks.size > 0 -%}
+        {%- for block in section.blocks -%}
+          {%- capture image_layout -%}
+                <div class="feature-row__item{% if overlap_images %} feature-row__item--overlap-images{% endif %}" data-aos="image-fade-in">
+                    {%- if block.settings.image != blank -%}
+                        <div class="image-wrap" style="height: 0; padding-bottom: {{ 100 | divided_by: block.settings.image.aspect_ratio }}%;">
+                            {%- assign img_url = block.settings.image -%}
+                            {% render 'image-element', img: img_url %}
+                        </div>
+                    {%- else -%}
+                        {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                    {%- endif -%}
+                </div>
+            {%- endcapture -%}
+          {% if block.settings.image != blank and block.settings.title != blank %}
+            <div class="feature-row slide_row">
+              {%- if block.settings.layout == 'left' -%}
+                {{ image_layout }}
+              {%- endif -%}
+
+              <div
+                class="feature-row__item feature-row__text feature-row__text--{{ block.settings.layout }} text-{{ block.settings.align_text }}"
+                data-aos
+              >
+                {%- if block.settings.subtitle != blank -%}
+                  <div class="subheading appear-delay{% cycle '','-1','-2','-3','-4' %}" da>
+                    {{ block.settings.subtitle }}
+                  </div>
+                {%- endif -%}
+                {%- if block.settings.title != blank -%}
+                  <div class="text-lg f-smb appear-delay{% cycle '','-1','-2','-3','-4' %}">
+                    {{ block.settings.title | escape }}
+                  </div>
+                {%- endif -%}
+                {%- if block.settings.text != blank -%}
+                  <div class="text-sm rte appear-delay{% cycle '','-1','-2','-3','-4' %}">
+                    {{ block.settings.text }}
+                  </div>
+                {%- endif -%}
+                {%- if block.settings.button_label != blank -%}
+                  <div class="appear-delay{% cycle '','-1','-2','-3','-4' %}">
+                    <a
+                      href="{{ block.settings.button_link }}"
+                      class="btn{% if block.settings.button_style == 'secondary' %} btn--tertiary{% endif %}"
+                    >
+                      {{ block.settings.button_label }}
+                    </a>
+                  </div>
+                {%- endif -%}
+              </div>
+
+              {%- if block.settings.layout == 'right' -%}
+                {{ image_layout }}
+              {%- endif -%}
+            </div>
+          {% endif %}
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+{%- if section.settings.divider -%}</div>{%- endif -%}
+
+{%- render 'section_css' -%}
+
+{% style %}
+  .dynamic-image-with-text .section-header {
+    margin-bottom: 0;
+  }
+  .dynamic-image-with-text .feature-row__item--overlap-images > * {
+    width: 100%;
+    transform: none;
+  }
+  .dynamic-image-with-text .feature-row__item--overlap-images img {
+    border-radius: 20px;
+  }
+  .dynamic-image-with-text .feature-row {
+    margin: 50px 0;
+    gap: 40px;
+  }
+  .dynamic-image-with-text .feature-row__item {
+    flex: 0 1 50%;
+    padding-block: 0;
+  }
+  .dynamic-image-with-text .feature-row .rte {
+    margin-top: 16px;
+  }
+  .dynamic-image-with-text .feature-row .rte p {
+    color: #1c2c58;
+  }
+  @media only screen and (max-width: 768px) {
+    .dynamic-image-with-text .feature-row__item--overlap-images {
+      margin: 0;
+    }
+    .dynamic-image-with-text .feature-row {
+      margin: 20px 0 0;
+      gap: 29px;
+    }
+    .dynamic-image-with-text .feature-row__text {
+      padding: 0;
+      padding-bottom: 15px;
+      margin: 0;
+    }
+
+    .dynamic-image-with-text .feature-row .h1 {
+      font-size: 14px;
+    }
+    .dynamic-image-with-text .feature-row .rte p {
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #000;
+    }
+  }
+  @media only screen and (min-width: 769px) {
+    .dynamic-image-with-text .feature-row__text--right {
+      padding-right: 0;
+    }
+
+    .dynamic-image-with-text .feature-row__text--left {
+      padding-left: 0;
+    }
+  }
+{% endstyle %}
+{% schema %}
+{
+  "name": "Dynamic image with text",
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "options": [
+        {
+          "value": "full-width",
+          "label": "t:sections.all.section_width.options__1"
+        },
+        {
+          "value": "page-width",
+          "label": "t:sections.all.section_width.options__2"
+        },
+        {
+          "value": "customize_width",
+          "label": "t:sections.all.section_width.options__3"
+        }
+      ],
+      "default": "page-width",
+      "label": "t:sections.all.section_width.label"
+    },
+    {
+      "type": "range",
+      "id": "customize_width",
+      "min": 1000,
+      "max": 1800,
+      "step": 10,
+      "default": 1800,
+      "unit": "px",
+      "label": "t:sections.all.customize_width.label"
+    },
+    {
+      "type": "text",
+      "id": "mg",
+      "label": "Margin",
+      "info": "Margin top, margin right, margin bottom, margin left. If you not use to blank",
+      "default": "50px,,20px,",
+      "placeholder": "50px,,50px,"
+    },
+    {
+      "type": "text",
+      "id": "pd",
+      "label": "Padding",
+      "info": "Padding top, padding right, padding bottom, padding left. If you not use to blank",
+      "placeholder": "50px,,50px,"
+    },
+    {
+      "type": "header",
+      "content": "== Design Mobile Options"
+    },
+    {
+      "type": "text",
+      "id": "mg_mb",
+      "label": "Margin",
+      "placeholder": "50px,,50px,"
+    },
+    {
+      "type": "text",
+      "id": "pd_mb",
+      "label": "Padding",
+      "placeholder": "50px,,50px,"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "checkbox",
+      "id": "divider",
+      "label": "t:sections.text-and-image.settings.divider.label",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image-with-text",
+      "name": "Image with text",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.text-and-image.settings.image.label"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.text-and-image.settings.title.label",
+          "default": "Image with text"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "t:sections.text-and-image.settings.text.label",
+          "default": "<p>Pair large text with an image to tell a story, explain a detail about your product, or describe a new promotion.</p>"
+        },
+
+        {
+          "type": "text_alignment",
+          "id": "align_text",
+          "label": "t:sections.text-and-image.settings.align_text.label",
+          "default": "left"
+        },
+        {
+          "type": "select",
+          "id": "layout",
+          "label": "t:sections.text-and-image.settings.layout.label",
+          "default": "right",
+          "options": [
+            {
+              "value": "left",
+              "label": "t:sections.text-and-image.settings.layout.options.left.label"
+            },
+            {
+              "value": "right",
+              "label": "t:sections.text-and-image.settings.layout.options.right.label"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Dynamic image with text"
+    }
+  ]
+}
+{% endschema %}

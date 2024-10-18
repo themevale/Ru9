@@ -1,0 +1,40 @@
+<div>
+  {% if title != blank %}
+    <div class="question ">
+      <button
+        type="button"
+        class="collapsible-trigger collapsible-trigger--inline collapsible--auto-height text-left"
+        aria-controls="FAQ-content-{{ id }}"
+      >
+        <span
+          class="collapsible-trigger__icon collapsible-trigger__icon--circle collapsible-trigger__icon--open"
+          role="presentation"
+        >
+          <svg aria-hidden="true" focusable="false" role="presentation" viewBox="0 0 25 25" fill="none">
+            <path d="M0.304 15.536V9.248H24.352V15.536H0.304ZM8.896 24.128V0.656H15.712V24.128H8.896Z" fill="#1C2C58"/>
+          </svg>
+        </span>
+        <span
+          class="collapsible-trigger__icon collapsible-trigger__icon--circle collapsible-trigger__icon--close"
+          role="presentation"
+        >
+          <svg aria-hidden="true" focusable="false" role="presentation" viewBox="0 0 17 3" fill="none">
+            <path d="M15.477 0H11.4036C10.1499 0 6.84238 0 1.51746 0C1.11501 0 0.729034 0.158035 0.444455 0.43934C0.159875 0.720644 0 1.10218 0 1.5C0 1.89782 0.159875 2.27936 0.444455 2.56066C0.729034 2.84196 1.11501 3 1.51746 3H5.28519H11.355H15.4825C15.885 3 16.271 2.84196 16.5555 2.56066C16.8401 2.27936 17 1.89782 17 1.5C17 1.10218 16.8401 0.720644 16.5555 0.43934C16.271 0.158035 15.885 0 15.4825 0H15.477Z" fill="#1C2C58"/>
+          </svg>
+        </span>
+        <span>{{ title }}</span>
+      </button>
+      <div id="FAQ-content-{{ id }}" class="collapsible-content collapsible-content--all">
+        <div class="collapsible-content__inner collapsible-content__inner--faq rte">
+          {%- if use_metafield -%}
+            {%- for txt_loop in text -%}
+              <p>{{ txt_loop.children[0].value }}</p>
+            {%- endfor -%}
+          {%- else -%}
+            {{ text }}
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>

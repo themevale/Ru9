@@ -8,7 +8,7 @@
       {% if template.name == 'product' %}
         {% if collection %}
           {% if settings.show_breadcrumbs_collection_link %}
-            <span class="breadcrumb__divider" aria-hidden="true">{% render 'icon-caret' %}</span>
+            <span class="breadcrumb__divider {{ routes }}" aria-hidden="true">{% render 'icon-caret' %}</span>
             <a href="{{ routes.collections_url }}">{{ 'general.search.collections' | t | replace: ':', '' }}</a>
           {% endif %}
 
@@ -18,7 +18,7 @@
             {{ collection.title | link_to: url }}
           {% endif %}
         {% endif %}
-        <span class="breadcrumb__divider" aria-hidden="true">{% render 'icon-caret' %}</span>
+        {% comment %} <span class="breadcrumb__divider" aria-hidden="true">{% render 'icon-caret' %}</span> {% endcomment %}
 
       {% elsif template.name == 'collection' and collection.handle %}
         {% if settings.show_breadcrumbs_collection_link %}
@@ -58,12 +58,15 @@
           {{ blog.title | link_to: blog.url }}
           <span class="breadcrumb__divider" aria-hidden="true">{% render 'icon-caret' %}</span>
           <span>{{ current_tags | join: ' + ' }}</span>
+        {%- else -%}
+          <span aria-current="page" class="is-current">{{ blog.title }}</span>
         {% endif %}
 
       {% elsif template.name == 'article' %}
         <span class="breadcrumb__divider" aria-hidden="true">{% render 'icon-caret' %}</span>
         {{ blog.title | link_to: blog.url }}
         <span class="breadcrumb__divider" aria-hidden="true">{% render 'icon-caret' %}</span>
+        <span aria-current="page" class="is-current">{{ article.title | split: '|' | first }}</span>
 
       {% elsif template.name == 'page' %}
         <span class="breadcrumb__divider" aria-hidden="true">{% render 'icon-caret' %}</span>

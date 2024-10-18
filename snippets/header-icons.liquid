@@ -20,37 +20,123 @@
       </a>
     {%- endif -%}
 
-    <a
-      href="{{ routes.cart_url }}"
-      class="site-nav__link site-nav__link--icon js-drawer-open-cart"
-      aria-controls="CartDrawer"
-      data-icon="{{ settings.cart_icon }}"
-    >
-      <span class="cart-link">
-        {%- if settings.cart_icon == 'cart' -%}
-          {% render 'icon-cart-2' %}
-        {%- elsif settings.cart_icon == 'bag-minimal' -%}
-          <svg
-            aria-hidden="true"
-            focusable="false"
-            role="presentation"
-            class="icon icon-bag-minimal"
-            viewBox="0 0 64 64"
-          >
-            <title>icon-bag-minimal</title><path stroke="null" fill-opacity="null" stroke-opacity="null" fill="null" d="M11.375 17.863h41.25v36.75h-41.25z"/><path stroke="null" d="M22.25 18c0-7.105 4.35-9 9.75-9s9.75 1.895 9.75 9"/>
-          </svg>
-        {%- else -%}
-          <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-bag" viewBox="0 0 64 64">
-            <g fill="none" stroke="#000" stroke-width="2"><path d="M25 26c0-15.79 3.57-20 8-20s8 4.21 8 20"/><path d="M14.74 18h36.51l3.59 36.73h-43.7z"/></g>
-          </svg>
-        {%- endif -%}
-        <span class="icon__fallback-text">{{ 'layout.cart.title' | t }}</span>
-        <span class="cart-link__bubble cart-link__bubble--visible">
-          <span class="cart-link__bubble-num">
-            {{cart.item_count}}
+    {% comment %}
+      <a
+        href="{{ routes.cart_url }}"
+        class="site-nav__link site-nav__link--icon js-drawer-open-cart"
+        aria-controls="CartDrawer"
+        id="cart-icon-bubble"
+        data-icon="{{ settings.cart_icon }}"
+      >
+        <span class="cart-link">
+          {%- if settings.cart_icon == 'cart' -%}
+            {% render 'icon-cart-2' %}
+          {%- elsif settings.cart_icon == 'bag-minimal' -%}
+            <svg
+              aria-hidden="true"
+              focusable="false"
+              role="presentation"
+              class="icon icon-bag-minimal"
+              viewBox="0 0 64 64"
+            >
+              <title>icon-bag-minimal</title><path stroke="null" fill-opacity="null" stroke-opacity="null" fill="null" d="M11.375 17.863h41.25v36.75h-41.25z"/><path stroke="null" d="M22.25 18c0-7.105 4.35-9 9.75-9s9.75 1.895 9.75 9"/>
+            </svg>
+          {%- else -%}
+            <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-bag" viewBox="0 0 64 64">
+              <g fill="none" stroke="#000" stroke-width="2"><path d="M25 26c0-15.79 3.57-20 8-20s8 4.21 8 20"/><path d="M14.74 18h36.51l3.59 36.73h-43.7z"/></g>
+            </svg>
+          {%- endif -%}
+          <span class="icon__fallback-text">{{ 'layout.cart.title' | t }}</span>
+          <span class="cart-link__bubble cart-link__bubble--visible">
+            <span class="cart-link__bubble-num">
+              {{ cart.item_count }}
+            </span>
           </span>
         </span>
-      </span>
-    </a>
+      </a>
+    {% endcomment %}
+
+    {% comment %}
+      {%- if request.page_type != 'cart' and settings.cart_type == 'drawer' -%}
+        <side-drawer-opener
+          class="header__icon header__icon--cart link no-js-hidden"
+          data-side-drawer="#Cart-Drawer"
+        >
+          <button
+            class="t-button bor-none c-pointer pad-0 color-foreground bg-transparent focus-inset cart-icon--drawer cart-icon-bubble"
+            type="button"
+            aria-haspopup="dialog"
+            aria-label="{{ 'sections.header.cart_count' | t: count: cart.item_count }}"
+            id="cart-icon-bubble"
+          >
+            {% if cart == empty %}
+              <span class="svg-wrapper">{{ 'icon-cart-empty.svg' | inline_asset_content }}</span>
+            {% else %}
+              <span class="svg-wrapper">{% render 'icon-cart-2' %}</span>
+            {% endif %}
+            <span class="visually-hidden">{{ 'templates.cart.cart' | t }}</span>
+            {%- if cart != empty -%}
+              <div class="cart-count-bubble">
+                <span aria-hidden="true">
+                  {%- if cart.item_count < 100 -%}
+                    {{ cart.item_count }}
+                  {%- else -%}
+                    {{ 'sections.header.cart_count_max.more' | t }}
+                  {%- endif -%}
+                </span>
+                <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
+              </div>
+            {%- endif -%}
+          </button>
+        </side-drawer-opener>
+        <noscript>
+          <a href="{{ routes.cart_url }}" class="header__icon header__icon--cart link focus-inset cart-icon--drawer">
+            {% if cart == empty %}
+              <span class="svg-wrapper">{{ 'icon-cart-empty.svg' | inline_asset_content }}</span>
+            {% else %}
+              <span class="svg-wrapper">{{ 'icon-cart.svg' | inline_asset_content }}</span>
+            {% endif %}
+            <span class="visually-hidden">{{ 'templates.cart.cart' | t }}</span>
+            {%- if cart != empty -%}
+              <div class="cart-count-bubble">
+                <span aria-hidden="true">
+                  {%- if cart.item_count < 100 -%}
+                    {{ cart.item_count }}
+                  {%- else -%}
+                    {{ 'sections.header.cart_count_max.more' | t }}
+                  {%- endif -%}
+                </span>
+                <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
+              </div>
+            {%- endif -%}
+          </a>
+        </noscript>
+      {%- else -%}
+        <a
+          href="{{ routes.cart_url }}"
+          class="header__icon header__icon--cart link focus-inset cart-icon--drawer cart-icon-bubble"
+          id="cart-icon-bubble"
+        >
+          {% if cart == empty %}
+            <span class="svg-wrapper">{{ 'icon-cart-empty.svg' | inline_asset_content }}</span>
+          {% else %}
+            <span class="svg-wrapper">{% render 'icon-cart-2' %}</span>
+          {% endif %}
+          <span class="visually-hidden">{{ 'templates.cart.cart' | t }}</span>
+          {%- if cart != empty -%}
+            <div class="cart-count-bubble">
+              <span aria-hidden="true">
+                {%- if cart.item_count < 100 -%}
+                  {{ cart.item_count }}
+                {%- else -%}
+                  {{ 'sections.header.cart_count_max.more' | t }}
+                {%- endif -%}
+              </span>
+              <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
+            </div>
+          {%- endif -%}
+        </a>
+      {%- endif -%}
+    {% endcomment %}
   </div>
 </div>

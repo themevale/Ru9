@@ -52,7 +52,7 @@
     </div>
   {%- else -%}
     {%- assign disable_sticky_header = true -%}
-    <div class="page-width page-content page-content--top">
+    <div class="page-width page-content page-content--top" style="{% if section.settings.section_width != 'page-width' %}--page-width: {{ page_width }}{% endif %}">
       <header class="section-header section-header--flush {{ align }}">
         {%- render 'breadcrumbs', classes: align -%}
         <h1 class="section-header__title text-3xl f-smb">

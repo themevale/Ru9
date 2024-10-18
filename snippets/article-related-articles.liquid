@@ -1,0 +1,128 @@
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+/>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<div class="blog-related__block--post">
+  {%- if heading != blank -%}
+    <h2 class="h3 t-center">{{ heading }}</h2>
+  {%- endif -%}
+  <div class="blog-related__block--post-slider swiper" id="related-blog-{{ section.id }}">
+    <div class="swiper-wrapper">
+      {%- assign article_arr = '' -%}
+      {%- assign count = 0 -%}
+      {%- for cat in categories -%}
+        {%- liquid
+          assign cat_strip = cat | strip | downcase
+          for tag in article.tags
+            assign tag_strip = tag | strip | downcase
+            if tag_strip == cat_strip or tag_strip contains cat_strip or cat_strip contains tag_strip
+              assign cur_cat = tag_strip
+              break
+            endif
+          endfor
+        -%}
+
+        {%- if cur_cat -%}
+          {%- for art in blog.articles -%}
+            {%- liquid
+              assign has_tag = false
+              for tag in art.tags
+                assign art_tag_strip = tag | strip | downcase
+                if art_tag_strip == cur_cat or art_tag_strip contains cur_cat or cur_cat contains art_tag_strip
+                  assign has_tag = true
+                  break
+                endif
+              endfor
+            -%}
+            {%- if has_tag and art.id != article.id and count < limit -%}
+              {%- unless article_arr contains art.id -%}
+                <a href="{{ art.url }}" class="swiper-slide">
+                  <div
+                    class="grid__image-ratio grid__image-ratio--{{ image_size }}"
+                    style="{% if image_size == 'natural' %}--padding-bottom: {{ 100 | divided_by: article.image.aspect_ratio }}%;{% endif %}"
+                  >
+                    {%- assign img_url = art.image | img_url: '360x' -%}
+                    <img
+                      loading="lazy"
+                      class="lazyloaded"
+                      src="{{ img_url }}"
+                      widths="[360, 540, 720, 900, 1080]"
+                      aspectratio="{{ art.image.aspect_ratio }}"
+                      sizes="auto"
+                      alt="{{ art.image.alt | escape }}"
+                    >
+                  </div>
+                  <div class="article__related--content">
+                    <h4 class="article__title">{{ art.title }}</h4>
+                    <div class="rte article__excerpt">
+                      {{ art.excerpt }}
+                    </div>
+                    <div class="article__grid-bot date-author-wrap flex ai-center flex-wrap">
+                      {%- if art.tags.size > 0 or articles.comments_count > 0 -%}
+                        <div class="article__date">
+                          {{ art.published_at | time_tag: format: 'month_day_year' }}
+                        </div>
+                      {%- endif -%}
+                      <div class="article__author">{{ art.author }}</div>
+                    </div>
+                  </div>
+                </a>
+                {%- assign article_arr = article_arr | append: ',' | append: art.id -%}
+                {%- assign count = count | plus: 1 -%}
+              {%- endunless -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{%- if count == 0 -%}
+  <style>
+    .blog-sidebar__block--post {
+      display: none;
+    }
+  </style>
+{%- endif -%}
+
+<!-- Swiper JS -->
+<script>
+  const category = '#related-blog-{{ section.id }}';
+
+  const breakpoint = window.matchMedia('(max-width:768px)');
+
+  let swipercategory;
+
+  const breakpointChecker = function () {
+    if (breakpoint.matches === true) {
+      if (swipercategory !== undefined) swipercategory.destroy(true, true);
+    } else if (breakpoint.matches === false) {
+      return enableSwiper();
+    }
+  };
+
+  const enableSwiper = function () {
+    var swipercategory = new Swiper(category, {
+      spaceBetween: 0,
+      slidesPerView: 1,
+      autoplay: false,
+      breakpoints: {
+        992: {
+          slidesPerView: 3,
+        },
+        1200: {
+          slidesPerView: 3,
+          spaceBetween: 32,
+        },
+      },
+    });
+  };
+
+  breakpoint.addListener(breakpointChecker);
+
+  breakpointChecker();
+</script>

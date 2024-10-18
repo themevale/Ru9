@@ -1,0 +1,100 @@
+{% unless current_tags.first %}
+  {{ 'blog.css' | asset_url | stylesheet_tag | preload: true }}
+  <div class="page-width">
+    {%- if section.settings.divider -%}<div class="section--divider section-padding">{%- endif -%}
+    <blog-videos class="blog-video blog-layout block" id="blog-video-{{ section.id }}">
+      <div class="blog-video__layout grid">
+        {%- if section.settings.video_all_content != blank and section.settings.video_all_link != blank -%}
+          <div class="blog-video__item grid__item one-half medium-up--one-quarter">
+            <div class="feature-blog first-child w-full flex-center t-center">
+              <h2 class="blog-title">
+                <a href="{{ section.settings.video_all_link }}" target="_blank">
+                  {{- section.settings.video_all_title }}
+                  <span class="btn">{{ section.settings.video_all_content }}</span></a
+                >
+              </h2>
+            </div>
+          </div>
+        {%- endif -%}
+        {%- for block in section.blocks -%}
+          {%- assign feature_article = block.settings.article -%}
+          <div class="blog-video__item grid__item one-half medium-up--one-quarter">
+            <div class="feature-blog">
+              <a href="{{ block.settings.link }}" target="_blank">
+                <img loading="lazy" src="{{ block.settings.image | img_url: "master" }}">
+                <span class="flex-center">
+                  {% render 'play-icon' %}
+                </span>
+              </a>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </blog-videos>
+    {%- if section.settings.divider -%}</div>{%- endif -%}
+  </div>
+{% endunless %}
+{% if current_tags.first %}
+  <style>
+    #shopify-section-{{section.id}}{
+      display: none
+    }
+  </style>
+{% endif %}
+{% schema %}
+{
+  "name": "Blog video",
+  "tag": "section",
+  "class": "section blog-video feature-blogs",
+  "settings": [
+    {
+      "type": "text",
+      "id": "video_all_title",
+      "label": "Tiêu đề tất cả video",
+      "default": "Videos"
+    },
+    {
+      "type": "text",
+      "id": "video_all_link",
+      "label": "Link tất cả video",
+      "default": "#"
+    },
+    {
+      "type": "text",
+      "id": "video_all_content",
+      "label": "Nội dung nút 'Watch All'",
+      "default": "WATCH ALL"
+    },
+    {
+      "type": "checkbox",
+      "id": "divider",
+      "label": "t:sections.text-and-image.settings.divider.label",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "blog",
+      "name": "Video",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Blogs",
+      "name": "Blog Video"
+    }
+  ]
+}
+{% endschema %}

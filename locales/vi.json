@@ -1,3 +1,12 @@
+/*
+* ------------------------------------------------------------
+* IMPORTANT: The contents of this file are auto-generated.
+*
+* This file may be updated by the Shopify admin language editor
+* or related systems. Please exercise caution as any changes
+* made to this file may be overwritten.
+* ------------------------------------------------------------
+*/
 {
   "general": {
     "404": {
@@ -339,7 +348,7 @@
       "show_less": "Rút gọn"
     },
     "general": {
-      "color_swatch_trigger": "Màu",
+      "color_swatch_trigger": "Color",
       "size_trigger": "Kích thước",
       "include": "Bao gồm",
       "size_chart": "Size chart",

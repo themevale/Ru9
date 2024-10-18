@@ -3,33 +3,95 @@
   if comment.status == 'pending'
     assign number_of_comments = article.comments_count | plus: 1
   endif
+
+  for tag in article.tags
+    assign tag = tag | handle
+  endfor
 -%}
 
-{%- if section.settings.image_hero and article.image -%}
-  <div class="collection-hero">
-    {% comment %} Full width image so don't need to adjust sizes attribute, fallback is 100vw {% endcomment %}
-    {%- render 'image-element',
-      img: article.image,
-      classes: 'collection-hero__image image-fit',
-    -%}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.27.4/tocbot.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.27.4/tocbot.css">
 
-    <div class="collection-hero__content">
-      <div class="page-width">
-        <header class="section-header section-header--hero">
-          <div class="section-header__shadow">
-            {%- render 'breadcrumbs' -%}
+{% comment %}
+  {%- if section.settings.image_hero and article.image -%}
+    <div class="collection-hero">
+      <div class="collection-hero__content">
+        <div class="page-width">
+          <header class="section-header section-header--hero">
+            <div class="section-header__shadow">
+              <h1 class="section-header__title">
+                {{ article.title }}
+              </h1>
+
+              <div class="date-author-wrap flex-center">
+                {%- if section.settings.blog_show_date or article.tags.size > 0 or articles.comments_count > 0 -%}
+                  <div class="article__date">
+                    {%- if section.settings.blog_show_tags and article.tags.size > 0 -%}
+                      {%- for tag in article.tags -%}
+                        {% if tag contains '_' %}
+                          {%- assign tag_starts_with = tag | slice: 0 -%}
+                          {% if tag_starts_with == '_' -%}
+                            {%- if tag_count %}{%- assign tag_count = tag_count | minus: 1 | at_least: 0 -%}{% endif -%}
+                            {%- continue -%}
+                          {%- endif -%}
+                        {%- endif %}
+                        <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a> &middot;
+                      {%- endfor -%}
+                    {%- endif -%}
+                    {%- if section.settings.blog_show_comments and article.comments_count > 0 -%}
+                      <a href="#comments">
+                        {{ 'blogs.comments.with_count' | t: count: number_of_comments }}
+                      </a>
+                      &middot;
+                    {%- endif -%}
+                    {%- if section.settings.blog_show_date -%}
+                      {{ article.published_at | time_tag: format: 'month_day_year' }}
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+
+                {%- if section.settings.blog_show_author -%}
+                  <div class="article__author">{{ article.author }}</div>
+                {%- endif -%}
+              </div>
+            </div>
+          </header>
+          {%- render 'image-element', img: article.image, classes: 'collection-hero__image image-fit' -%}
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+{% endcomment %}
+<div class="article-section relative section-padding">
+  <div class="article-banner {{ tag }} show absolute top-0 left-0 w-full pointer-none"></div>
+
+  <div class="page-width" style="--page-width: 1104px;">
+    <article class="article">
+      <header class="section-header">
+        <div class="section-header__shadow">
+          {%- render 'article-category', article: article -%}
+          <h1 class="section-header__title text-3xl">{{ article.title }}</h1>
+
+          <div class="date-author-wrap flex-center">
             {%- if section.settings.blog_show_date or article.tags.size > 0 or articles.comments_count > 0 -%}
               <div class="article__date">
                 {%- if section.settings.blog_show_tags and article.tags.size > 0 -%}
                   {%- for tag in article.tags -%}
-                    {% if tag contains "_" %}{%- assign tag_starts_with = tag | slice: 0 -%}{% if tag_starts_with == "_" %}{% if tag_count %}{%- assign tag_count = tag_count | minus: 1 | at_least: 0 -%}{% endif %}{% continue %}{% endif %}{% endif %}
+                    {% if tag contains '_' %}
+                      {%- assign tag_starts_with = tag | slice: 0 -%}
+                      {% if tag_starts_with == '_' -%}
+                        {%- if tag_count %}{%- assign tag_count = tag_count | minus: 1 | at_least: 0 -%}{% endif -%}
+                        {%- continue -%}
+                      {%- endif -%}
+                    {%- endif %}
                     <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a> &middot;
                   {%- endfor -%}
                 {%- endif -%}
                 {%- if section.settings.blog_show_comments and article.comments_count > 0 -%}
                   <a href="#comments">
                     {{ 'blogs.comments.with_count' | t: count: number_of_comments }}
-                  </a> &middot;
+                  </a>
+                  &middot;
                 {%- endif -%}
                 {%- if section.settings.blog_show_date -%}
                   {{ article.published_at | time_tag: format: 'month_day_year' }}
@@ -37,203 +99,351 @@
               </div>
             {%- endif -%}
 
-            <h1 class="section-header__title">
-              {{ article.title }}
-            </h1>
-
             {%- if section.settings.blog_show_author -%}
-              <div class="article__author">by {{ article.author }}</div>
+              <div class="article__author">{{ article.author }}</div>
             {%- endif -%}
           </div>
-        </header>
-      </div>
-    </div>
-  </div>
-{%- endif -%}
-
-<div class="page-width page-width--narrow page-content">
-  <article class="article">
-    {%- unless section.settings.image_hero and article.image -%}
-      {%- render 'breadcrumbs' -%}
-
-      <header class="section-header">
-        {%- if section.settings.blog_show_date or article.tags.size > 0 or articles.comments_count > 0 -%}
-          <div class="article__date">
-            {%- if section.settings.blog_show_tags and article.tags.size > 0 -%}
-              {%- for tag in article.tags -%}
-                {% if tag contains "_" %}{%- assign tag_starts_with = tag | slice: 0 -%}{% if tag_starts_with == "_" %}{% if tag_count %}{%- assign tag_count = tag_count | minus: 1 | at_least: 0 -%}{% endif %}{% continue %}{% endif %}{% endif %}
-                <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a> &middot;
-              {%- endfor -%}
-            {%- endif -%}
-            {%- if section.settings.blog_show_comments and article.comments_count > 0 -%}
-              <a href="#comments">
-                {{ 'blogs.comments.with_count' | t: count: number_of_comments }}
-              </a> &middot;
-            {%- endif -%}
-            {%- if section.settings.blog_show_date -%}
-              {{ article.published_at | time_tag: format: 'month_day_year' }}
-            {%- endif -%}
-          </div>
-        {%- endif -%}
-        <h1 class="section-header__title">{{ article.title }}</h1>
-        {%- if section.settings.blog_show_author -%}
-          <div class="article__author">by {{ article.author }}</div>
-        {%- endif -%}
+        </div>
       </header>
-    {%- endunless -%}
 
-    <div class="article__body rte">
-      {{ article.content }}
-    </div>
-
-    {%- if section.settings.social_sharing_blog -%}
-      {%- render 'social-sharing', share_title: article.title, share_permalink: article.url, share_image: article.image -%}
-    {%- endif -%}
-
-    {%- if blog.comments_enabled? -%}
-
-      {%- if number_of_comments > 0 -%}
-        <hr class="hr--large">
-        <h3>{{ 'blogs.comments.with_count' | t: count: number_of_comments }}</h3>
-        <hr class="hr--small hr--clear">
+      {%- if section.settings.image_hero and article.image -%}
+        {%- render 'image-element', img: article.image, classes: 'article__image image-fit' -%}
       {%- endif -%}
 
-      {%- paginate article.comments by 5 -%}
-        <div id="comments">
-          {%- if comment and comment.errors == blank -%}
-            <hr class="hr--small hr--clear">
-            <p class="note note--success">
-              {%- if blog.moderated? -%}
-                {{ 'blogs.comments.success_moderated' | t }}
-              {%- else -%}
-                {{ 'blogs.comments.success' | t }}
-              {%- endif -%}
-            </p>
-          {%- endif -%}
+      {% if section.settings.table_of_contents_heading != blank %}
+        <div class="blog-articles" data-tab-of-contents="{{ section.settings.table_of_contents_heading | escape }}">
+      {% endif %}
+      {% if section.settings.table_of_contents_heading != blank %}
+        <div class="blog__table blog-toc">
+          <h3 class="flex ai-center">
+            <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 4.30005H21V6.30005H3V4.30005ZM3 11.3H21V13.3H3V11.3ZM3 18.3H21V20.3H3V18.3Z" fill="#2D3748"/>
+            </svg>
 
-          {%- if number_of_comments > 0 -%}
-            <ul class="no-bullets">
-              {%- if comment.status == 'pending' -%}
-                <li id="Comment-{{ comment.id }}" class="article__comment">
-                  {%- render 'comment', comment: comment -%}
-                </li>
-              {%- endif -%}
+            <span class="f-bold text-lg">Mục lục</span>
+          </h3>
+          <nav class="auto-toc"></nav>
+        </div>
+      {% endif %}
 
-              {%- for comment in article.comments -%}
-                <li id="Comment-{{ comment.id }}" class="article__comment">
-                  {%- render 'comment', comment: comment -%}
-                </li>
+      <div class="article__body js-toc-content rte">
+        {{ article.content }}
+      </div>
 
-                {%- unless forloop.last -%}
-                  <li><hr class="hr--clear"></li>
-                {%- endunless -%}
-              {%- endfor -%}
-            </ul>
+      <div class="article__footer small--flex-col flex">
+        <div class="one-whole medium-up--one-half article__footer-item">
+          <span class="article__footer-label">Tác giả</span>
+          <div class="article__footer-author flex ai-center f-smb">
+            <svg width="30" height="31" viewBox="0 0 30 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M13.5785 1.18776C10.0346 1.53401 6.73779 3.15939 4.3037 5.76038C1.8696 8.36138 0.464649 11.7601 0.351198 15.3219C0.237747 18.8838 1.42355 22.3652 3.68718 25.116C5.95081 27.8669 9.1375 29.6991 12.6521 30.2706C16.1668 30.842 19.7692 30.1136 22.7865 28.2214C25.8038 26.3292 28.0298 23.4026 29.0488 19.9879C30.0678 16.5733 29.8102 12.9043 28.324 9.6659C26.8378 6.42748 24.2246 3.8412 20.9725 2.38996C18.6394 1.40317 16.1038 0.990897 13.5785 1.18776ZM16.1488 5.70089C17.2002 5.95534 18.135 6.55749 18.8019 7.40987C19.4687 8.26224 19.8287 9.3149 19.8233 10.3975C19.8179 11.4801 19.4476 12.5291 18.7723 13.3749C18.0971 14.2206 17.1564 14.8134 16.1025 15.0574C15.0487 15.3015 13.9433 15.1824 12.9655 14.7193C11.9877 14.2564 11.1947 13.4766 10.7148 12.5064C10.235 11.5362 10.0963 10.4323 10.3214 9.3734C10.5464 8.31454 11.122 7.36266 11.9549 6.67193C12.5295 6.19432 13.2078 5.85778 13.9355 5.68918C14.6632 5.52058 15.4202 5.52459 16.1461 5.70089H16.1488ZM18.6607 17.6772C21.9427 18.2101 23.947 22.4087 21.7554 24.1586C19.8597 25.6941 17.4976 26.5371 15.0588 26.5483C12.62 26.5596 10.2503 25.7385 8.34052 24.2205C7.92243 23.9359 7.60661 23.5246 7.4397 23.047C7.27273 22.5694 7.26345 22.0507 7.41325 21.5674C7.60832 20.6066 8.08252 19.7248 8.77641 19.0328C9.47036 18.3407 10.353 17.8691 11.3137 17.6772C11.7502 17.604 18.2149 17.602 18.6607 17.6772Z" fill="#2960AD"/>
+            </svg>
 
-            {%- if paginate.pages > 1 -%}
-              {%- render 'pagination', paginate: paginate, hash: '#comments' -%}
+            {{ article.author }}
+          </div>
+        </div>
+        <div class="one-whole medium-up--one-half article__footer-item">
+          <span class="article__footer-label">Chia sẻ bài viết</span>
+          <div class="article__footer-social">
+            {%- if section.settings.social_sharing_blog -%}
+              {%- render 'social-sharing',
+                share_title: article.title,
+                share_permalink: article.url,
+                share_image: article.image,
+                is_article: true
+              -%}
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+
+      {% if section.settings.table_of_contents_heading != blank %}</div>{% endif %}
+
+      {%- if blog.comments_enabled? -%}
+        {%- if number_of_comments > 0 -%}
+          <hr class="hr--large">
+          <h3>{{ 'blogs.comments.with_count' | t: count: number_of_comments }}</h3>
+          <hr class="hr--small hr--clear">
+        {%- endif -%}
+
+        {%- paginate article.comments by 5 -%}
+          <div id="comments">
+            {%- if comment and comment.errors == blank -%}
+              <hr class="hr--small hr--clear">
+              <p class="note note--success">
+                {%- if blog.moderated? -%}
+                  {{ 'blogs.comments.success_moderated' | t }}
+                {%- else -%}
+                  {{ 'blogs.comments.success' | t }}
+                {%- endif -%}
+              </p>
             {%- endif -%}
 
-          {%- endif -%}
+            {%- if number_of_comments > 0 -%}
+              <ul class="no-bullets">
+                {%- if comment.status == 'pending' -%}
+                  <li id="Comment-{{ comment.id }}" class="article__comment">
+                    {%- render 'comment', comment: comment -%}
+                  </li>
+                {%- endif -%}
 
-          <hr class="hr--large">
+                {%- for comment in article.comments -%}
+                  <li id="Comment-{{ comment.id }}" class="article__comment">
+                    {%- render 'comment', comment: comment -%}
+                  </li>
 
-          <header class="section-header{% unless settings.type_headers_align_text %} section-header--with-link{% endunless %}">
-            <h3 class="section-header__title">{{ 'blogs.comments.title' | t }}</h3>
-          </header>
+                  {%- unless forloop.last -%}
+                    <li><hr class="hr--clear"></li>
+                  {%- endunless -%}
+                {%- endfor -%}
+              </ul>
 
-          <div class="form-vertical">
-            {%- form 'new_comment', article -%}
-
-              {{ form.errors | default_errors }}
-
-              <div class="grid grid--small">
-                <div class="grid__item medium-up--one-half">
-                  <label for="CommentAuthor">{{ 'blogs.comments.name' | t }}</label>
-                  <input required class="input-full{% if form.errors contains 'author' %} error{% endif %}" type="text" name="comment[author]" id="CommentAuthor" value="{{ form.author }}" autocapitalize="words">
-                </div>
-                <div class="grid__item medium-up--one-half">
-                  <label for="CommentEmail">{{ 'blogs.comments.email' | t }}</label>
-                  <input required class="input-full{% if form.errors contains 'email' %} error{% endif %}" type="email" name="comment[email]" id="CommentEmail" value="{{ form.email }}" autocorrect="off" autocapitalize="off">
-                </div>
-              </div>
-
-              <label for="CommentBody">{{ 'blogs.comments.message' | t }}</label>
-              <textarea required class="input-full{% if form.errors contains 'body' %} error{% endif %}" name="comment[body]" id="CommentBody">{{ form.body }}</textarea>
-
-              {%- if blog.moderated? -%}
-                <p><small>{{ 'blogs.comments.moderated' | t }}</small></p>
+              {%- if paginate.pages > 1 -%}
+                {%- render 'pagination', paginate: paginate, hash: '#comments' -%}
               {%- endif -%}
+            {%- endif -%}
 
-              <button type="submit" class="btn btn--secondary">
-                {{ 'blogs.comments.post' | t }}
-              </button>
+            <hr class="hr--large">
 
-              {% comment %}
-                Remove the following three lines of code to remove the note
-                about being protected by Google's reCAPTCHA service.
-                By removing it, the small reCAPTCHA widget will appear in the
-                bottom right corner of the page.
-              {% endcomment %}
-              {{ 'shopify.online_store.spam_detection.disclaimer_html' | t }}
+            <header class="section-header{% unless settings.type_headers_align_text %} section-header--with-link{% endunless %}">
+              <h3 class="section-header__title">{{ 'blogs.comments.title' | t }}</h3>
+            </header>
 
-            {%- endform -%}
+            <div class="form-vertical">
+              {%- form 'new_comment', article -%}
+                {{ form.errors | default_errors }}
+
+                <div class="grid grid--small">
+                  <div class="grid__item medium-up--one-half">
+                    <label for="CommentAuthor">{{ 'blogs.comments.name' | t }}</label>
+                    <input
+                      required
+                      class="input-full{% if form.errors contains 'author' %} error{% endif %}"
+                      type="text"
+                      name="comment[author]"
+                      id="CommentAuthor"
+                      value="{{ form.author }}"
+                      autocapitalize="words"
+                    >
+                  </div>
+                  <div class="grid__item medium-up--one-half">
+                    <label for="CommentEmail">{{ 'blogs.comments.email' | t }}</label>
+                    <input
+                      required
+                      class="input-full{% if form.errors contains 'email' %} error{% endif %}"
+                      type="email"
+                      name="comment[email]"
+                      id="CommentEmail"
+                      value="{{ form.email }}"
+                      autocorrect="off"
+                      autocapitalize="off"
+                    >
+                  </div>
+                </div>
+
+                <label for="CommentBody">{{ 'blogs.comments.message' | t }}</label>
+                <textarea
+                  required
+                  class="input-full{% if form.errors contains 'body' %} error{% endif %}"
+                  name="comment[body]"
+                  id="CommentBody"
+                >{{ form.body }}</textarea>
+
+                {%- if blog.moderated? -%}
+                  <p>
+                    <small>{{ 'blogs.comments.moderated' | t }}</small>
+                  </p>
+                {%- endif -%}
+
+                <button type="submit" class="btn btn--secondary">
+                  {{ 'blogs.comments.post' | t }}
+                </button>
+
+                {% comment %}
+                  Remove the following three lines of code to remove the note
+                  about being protected by Google's reCAPTCHA service.
+                  By removing it, the small reCAPTCHA widget will appear in the
+                  bottom right corner of the page.
+                {% endcomment %}
+                {{ 'shopify.online_store.spam_detection.disclaimer_html' | t }}
+              {%- endform -%}
+            </div>
           </div>
+        {%- endpaginate -%}
+      {%- endif -%}
 
+      <hr class="hr--large">
+
+      <div id="fixed-toc" class="blog-toc fixed-toc">
+        <button class="toc-toggle-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <path d="M24 56c0-13.3 10.7-24 24-24H80c13.3 0 24 10.7 24 24V176h16c13.3 0 24 10.7 24 24s-10.7 24-24 24H40c-13.3 0-24-10.7-24-24s10.7-24 24-24H56V80H48C34.7 80 24 69.3 24 56zM86.7 341.2c-6.5-7.4-18.3-6.9-24 1.2L51.5 357.9c-7.7 10.8-22.7 13.3-33.5 5.6s-13.3-22.7-5.6-33.5l11.1-15.6c23.7-33.2 72.3-35.6 99.2-4.9c21.3 24.4 20.8 60.9-1.1 84.7L86.8 432H120c13.3 0 24 10.7 24 24s-10.7 24-24 24H32c-9.5 0-18.2-5.6-22-14.4s-2.1-18.9 4.3-25.9l72-78c5.3-5.8 5.4-14.6 .3-20.5zM224 64H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H224c-17.7 0-32-14.3-32-32s14.3-32 32-32zm0 160H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H224c-17.7 0-32-14.3-32-32s14.3-32 32-32zm0 160H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H224c-17.7 0-32-14.3-32-32s14.3-32 32-32z"/>
+          </svg>
+        </button>
+        <div class="fixed-toc-content">
+          <h3 class="active"><span>Mục lục</span><strong class="toc-toggle-btn">×</strong></h3>
         </div>
-      {%- endpaginate -%}
-    {%- endif -%}
+      </div>
+    </article>
 
-    <hr class="hr--large">
+    <div class="text-center">
+      <a href="{{ blog.url }}" class="btn return-link">
+        <svg
+          aria-hidden="true"
+          focusable="false"
+          role="presentation"
+          class="icon icon--wide icon-arrow-left"
+          viewBox="0 0 50 15"
+        >
+          <title>icon-left-arrow</title><path d="M50 5.38v4.25H15V15L0 7.5 15 0v5.38Z"/>
+        </svg>
+        {{ 'blogs.article.back_to_blog' | t: title: blog.title -}}
+      </a>
+    </div>
 
-  </article>
-
-  <div class="text-center">
-    <a href="{{ blog.url }}" class="btn return-link"><svg aria-hidden="true" focusable="false" role="presentation" class="icon icon--wide icon-arrow-left" viewBox="0 0 50 15"><title>icon-left-arrow</title><path d="M50 5.38v4.25H15V15L0 7.5 15 0v5.38Z"/></svg> {{ 'blogs.article.back_to_blog' | t: title: blog.title }}</a>
+    <div class="article__related">
+      {%- if section.settings.show_related_articles and settings.category_tag and settings.category_tag != '' -%}
+        {%- assign categories = settings.category_tag | split: ',' -%}
+        {%- render 'article-related-articles',
+          heading: section.settings.related_articles_heading,
+          image_size: section.settings.related_articles_image_size,
+          limit: section.settings.related_articles_limit,
+          categories: categories
+        -%}
+      {%- endif -%}
+    </div>
   </div>
 </div>
 
 <script type="application/ld+json">
-{
-  "@context": "http://schema.org",
-  "@type": "Article",
-  "articleBody": {{ article.content | strip_html | json }},
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": {{ shop.url | append: article.url | json }}
-  },
-  "headline": {{ article.title | json }},
-  {% if article.excerpt != blank %}
-    "description": {{ article.excerpt | strip_html | json }},
-  {% endif %}
-  {% if article.image %}
-    {% assign image_size = article.image.width | append: 'x' %}
-    "image": [
-      {{ article | img_url: image_size | prepend: "https:" | json }}
-    ],
-  {% endif %}
-  "datePublished": {{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
-  "dateModified": {{ article.updated_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
-  "dateCreated": {{ article.created_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
-  "author": {
-    "@type": "Person",
-    "name": {{ article.author | json }}
-  },
-  "publisher": {
-    "@type": "Organization",
-    {% if page_image %}
-      {% assign image_size = page_image.width | append: 'x' %}
-      "logo": {
-        "@type": "ImageObject",
-        "height": {{ page_image.height | json }},
-        "url": {{ page_image | img_url: image_size | prepend: "https:" | json }},
-        "width": {{ page_image.width | json }}
-      },
+  {
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "articleBody": {{ article.content | strip_html | json }},
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": {{ shop.url | append: article.url | json }}
+    },
+    "headline": {{ article.title | json }},
+    {% if article.excerpt != blank %}
+      "description": {{ article.excerpt | strip_html | json }},
     {% endif %}
-    "name": {{ shop.name | json }}
+    {% if article.image %}
+      {% assign image_size = article.image.width | append: 'x' %}
+      "image": [
+        {{ article | img_url: image_size | prepend: "https:" | json }}
+      ],
+    {% endif %}
+    "datePublished": {{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
+    "dateModified": {{ article.updated_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
+    "dateCreated": {{ article.created_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
+    "author": {
+      "@type": "Person",
+      "name": {{ article.author | json }}
+    },
+    "publisher": {
+      "@type": "Organization",
+      {% if page_image %}
+        {% assign image_size = page_image.width | append: 'x' %}
+        "logo": {
+          "@type": "ImageObject",
+          "height": {{ page_image.height | json }},
+          "url": {{ page_image | img_url: image_size | prepend: "https:" | json }},
+          "width": {{ page_image.width | json }}
+        },
+      {% endif %}
+      "name": {{ shop.name | json }}
+    }
   }
-}
 </script>
+
+{% if section.settings.table_of_contents_heading != blank %}
+  <script>
+    const heading = document.querySelector('.blog-articles').getAttribute('data-tab-of-contents');
+    const tocHeading = document.querySelectorAll('.blog__table h3');
+
+    function toSlug(string) {
+      return string
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/-$/, '')
+        .replace(/^-/, '');
+    }
+    const contentHeadings = document.querySelectorAll(
+      '.js-toc-content h1, .js-toc-content h2, .js-toc-content h3, .js-toc-content h4, .js-toc-content h5, .js-toc-content h6'
+    );
+
+    if (contentHeadings && contentHeadings.length) {
+      contentHeadings.forEach((item, index) => {
+        item.id = toSlug(item.innerText);
+      });
+    }
+
+    tocbot.init({
+      headingsOffset: 70,
+      scrollSmoothOffset: -70,
+      // Where to render the table of contents.
+      tocSelector: '.blog__table .auto-toc',
+      // Where to grab the headings to build the table of contents.
+      contentSelector: '.js-toc-content',
+      // Which headings to grab inside of the contentSelector element.
+      headingSelector: heading,
+      // For headings inside relative or absolute positioned containers within content.
+      hasInnerContainers: true,
+    });
+
+    console.log(tocbot);
+
+    const box = document.querySelector('.blog__table .auto-toc');
+    const fixedToc = document.querySelector('.fixed-toc');
+
+    // Fixed TOC
+    if (fixedToc && box.childNodes.length) {
+      const boxClone = box.cloneNode(true);
+      document.querySelector('.fixed-toc .fixed-toc-content').appendChild(boxClone);
+      let observer = new IntersectionObserver(
+        (entries, observer) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              fixedToc.classList.remove('open');
+              fixedToc.classList.add('hidden');
+            } else {
+              fixedToc.classList.remove('hidden');
+            }
+          });
+        },
+        {
+          threshold: 0,
+        }
+      );
+      document.querySelectorAll('.blog__table').forEach((div) => {
+        observer.observe(div);
+      });
+      const toggleBtn = document.querySelectorAll('.toc-toggle-btn');
+      toggleBtn.forEach((item) => {
+        item.addEventListener('click', function () {
+          fixedToc.classList.toggle('open');
+        });
+      });
+    }
+
+    if (tocHeading && tocHeading.length) {
+      tocHeading.forEach((heading) => {
+        heading.addEventListener('click', function () {
+          this.classList.toggle('active');
+        });
+      });
+    }
+
+    if (box.childNodes.length === 0) {
+      box.closest('.blog__table').classList.add('hidden');
+      if (fixedToc) {
+        fixedToc.classList.add('hidden');
+      }
+    } else {
+      console.log('⛔️ Element is NOT empty');
+    }
+  </script>
+{% endif %}
 
 {% schema %}
 {
@@ -274,6 +484,67 @@
       "id": "social_sharing_blog",
       "label": "t:sections.article-template.settings.social_sharing_blog.label",
       "default": true
+    },
+    {
+      "type": "header",
+      "content": "Table of contents"
+    },
+    {
+      "type": "text",
+      "id": "table_of_contents_heading",
+      "label": "Thẻ heading mục lục"
+    },
+    {
+      "type": "header",
+      "content": "Bài viết liên quan"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_related_articles",
+      "label": "Hiển thị",
+      "default": true
+    },
+    {
+      "type": "text",
+      "label": "Tiêu đề",
+      "id": "related_articles_heading"
+    },
+    {
+      "type": "range",
+      "label": "Số lượng bài viết",
+      "id": "related_articles_limit",
+      "default": 3,
+      "min": 1,
+      "max": 6,
+      "step": 1
+    },
+    {
+      "type": "select",
+      "id": "related_articles_image_size",
+      "label": "t:sections.blog-template.settings.blog_image_size.label",
+      "default": "wide",
+      "options": [
+        {
+          "value": "natural",
+          "label": "t:sections.blog-template.settings.blog_image_size.options.natural.label"
+        },
+        {
+          "value": "square",
+          "label": "t:sections.blog-template.settings.blog_image_size.options.square.label"
+        },
+        {
+          "value": "landscape",
+          "label": "t:sections.blog-template.settings.blog_image_size.options.landscape.label"
+        },
+        {
+          "value": "portrait",
+          "label": "t:sections.blog-template.settings.blog_image_size.options.portrait.label"
+        },
+        {
+          "value": "wide",
+          "label": "t:sections.blog-template.settings.blog_image_size.options.wide.label"
+        }
+      ]
     }
   ],
   "disabled_on": {

@@ -1,0 +1,632 @@
+{% assign product_handle = section.settings.productHandle %}
+
+{% if product.handle == product_handle %}
+  {% style %}
+    .pf-image-hotspot-wrapper {
+      padding: clamp(150px, 1vw, 40px) 0px 0px;
+      text-align: center;
+    }
+    .pf-image-hotspot-hotspots img {
+      border-radius: 14px;
+      height: 100%;
+    }
+    .pf-image-hotspot-hotspots {
+      position: relative;
+      text-align: center;
+      display: inline-block;
+    }
+    .product-hotspot-section .product-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.6rem;
+      align-items: center;
+    }
+    .pf-image-hotspot-hotspots * {
+      font-weight: normal;
+      transition: all ease 0.5s;
+    }
+
+    .hotspot-heading {
+      max-width: 50.2rem;
+      margin-left: auto;
+      margin-right: auto;
+      /* padding: 20px 15px 50px; */
+    }
+    .hotspot-heading .h1 {
+      margin-top: 0;
+    }
+    .hotspot-item__title,
+    .hotspot-item__sub--title {
+      font-size: var(--sub-font-size);
+      margin-bottom: 15px;
+    }
+
+    .hotspot-item__title {
+      font-size: 20px;
+      margin-top: 0;
+    }
+
+    .hotspot-content {
+      left: 20px;
+    }
+
+    .hotspot-type-product.active .hotspot-btn {
+      top: -250px;
+    }
+
+    .hotspot-type-product.active .hotspot-content {
+      opacity: 1;
+    }
+
+    .hotspot-type-product.active .hotspot-btn {
+      color: #fff;
+      background: var(--colorTextBody);
+    }
+
+    .pf-image-hotspot {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      margin-left: -10px;
+      margin-top: -10px;
+      border-radius: 50%;
+      transition: opacity 0.8s ease;
+      opacity: 1;
+    }
+
+    .hotspot-content {
+      width: 250px;
+      position: absolute;
+      top: -250px;
+      left: 50px;
+      opacity: 0;
+      text-align: left;
+    }
+
+    .hotspot-content.right {
+      left: auto;
+      right: 50px;
+    }
+
+    .hotspot-btn {
+      position: absolute;
+      left: -5px;
+      top: 0;
+      width: 30px;
+      height: 30px;
+      font-weight: bold;
+      text-align: center;
+      border-radius: 50px;
+      background: #fff;
+      color: var(--colorTextBody);
+      border: 1px solid var(--colorTextBody);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hotspot-btn.active {
+      color: #fff;
+      background: var(--colorTextBody);
+    }
+
+    .hotspot-sonar {
+      width: 1px;
+      height: 0px;
+      position: absolute;
+      top: 0;
+      left: 10px;
+      display: block;
+      background: var(--colorTextBody);
+    }
+
+    .pf-image-hotspot.active .hotspot-sonar {
+      height: 250px;
+      top: -240px;
+    }
+
+    .product-image-with-text .row.wrap-content:last-child {
+      padding-bottom: 0;
+    }
+
+    .product-image-with-text .image-wrap img {
+      width: 100%;
+    }
+
+    .section-mobile--slider .slick-arrow {
+      opacity: 1;
+    }
+
+    .section-mobile--slider .slick-arrow.slick-next {
+      right: -15px;
+    }
+
+    .section-mobile--slider .slick-arrow.slick-prev {
+      left: -15px;
+    }
+
+    .section-mobile--slider .slick-arrow:before {
+      opacity: 0.5 !important;
+      font-size: 32px;
+    }
+
+    .section-mobile--slider h3.primary-color,
+    .section-mobile--slider .primary-color.h3 {
+      font-size: 22px;
+    }
+
+    .pf-image-hotspot.active .hotspot-sonar {
+      height: 250px;
+      top: -240px;
+    }
+
+    .product-hotspot-section {
+      --hotspot-height: 200px;
+      --hotspot-height-mb: 110px;
+      --hotspot-content-align: right;
+      --hotspot-content-translate: none;
+    }
+
+    @media (min-width: 769px) {
+      .visible-xs {
+        display: none;
+      }
+
+      .hotspot-btn {
+        cursor: pointer;
+      }
+
+      .hotspot-type-product.active .hotspot-btn {
+        top: calc(-1 * var(--hotspot-height));
+      }
+
+      .hotspot-content {
+        top: var(--hotspot-height);
+      }
+
+      .pf-image-hotspot.active .hotspot-sonar {
+        height: var(--hotspot-height);
+        top: calc(-1 * var(--hotspot-height) + 10px);
+      }
+
+      .horizontal.active .hotspot-sonar {
+        height: 1px;
+        width: var(--hotspot-height);
+        top: 0;
+      }
+
+      .horizontal.hotspot-type-product.active .hotspot-btn {
+        top: 0;
+        transform: translateY(-50%);
+        left: var(--hotspot-height);
+      }
+
+      .hotspot-content {
+        top: calc(-1 * var(--hotspot-height));
+        z-index: -1;
+      }
+
+      .horizontal .hotspot-content {
+        top: 0;
+      }
+
+      .top .hotspot-content {
+        left: 12px;
+        transform: translateX(-50%) translateY(-100%);
+        text-align: center;
+      }
+      p.hotspot-item__sub-title {
+        margin: 0;
+      }
+      /*       .right .hotspot-content{
+            text-align: left;
+            left: calc(var(--hotspot-height) + 50px);
+            transform: translateY(-50%);
+          } */
+      .left .hotspot-content {
+        transform: translateX(calc(-100% - 70px));
+        text-align: right;
+      }
+
+      .bottom .hotspot-content {
+        left: 12px;
+
+        transform: translateX(-50%) translateY(50%);
+        text-align: center;
+      }
+
+      .horizontal.right .hotspot-content {
+        left: calc(var(--hotspot-height) + 50px);
+        transform: translateY(-50%);
+      }
+
+      .horizontal.left .hotspot-content {
+        transform: translateX(calc(-100% - 70px)) translateY(-50%);
+      }
+
+      .horizontal.top .hotspot-content {
+        transform: translateY(-100%);
+      }
+
+      .horizontal.bottom .hotspot-content {
+        transform: none;
+        top: 35px;
+      }
+    }
+    .hotspot-type-product.active .hotspot-content {
+      z-index: 3;
+    }
+    @media (max-width: 768px) {
+      .product-hotspot-section {
+        margin-top: 0;
+      }
+      .product-hotspot-section .product-grid {
+        grid-template-columns: 1fr;
+        overflow: hidden;
+      }
+      .hidden-xs {
+        display: none;
+      }
+      .hotspot-btn {
+        left: -11px;
+        width: 20px;
+        height: 20px;
+      }
+
+      .hotspot-type-product.active .hotspot-btn,
+      .hotspot-content {
+        top: -110px;
+      }
+
+      .pf-image-hotspot.active .hotspot-sonar {
+        height: 110px;
+        top: -100px;
+      }
+
+      .hotspot-content {
+        left: 15px;
+      }
+
+      .hotspot-mobile .hotspot-content {
+        bottom: auto;
+        width: 90vw;
+        top: 0;
+        left: 50%;
+        transform: translatex(-50%);
+        text-align: center;
+      }
+
+      .hotspot-item__title {
+        font-size: 18px;
+        margin-bottom: 10px;
+        margin-top: 0;
+      }
+
+      .hotspot-type-product.active + div.hotspot-mobile .hotspot-content {
+        opacity: 1;
+      }
+
+      .hotspot-btn {
+        left: 0;
+      }
+
+      .hotspot-type-product.active .hotspot-btn,
+      .hotspot-content {
+        top: calc(-1 * var(--hotspot-height-mb));
+      }
+
+      .pf-image-hotspot.active .hotspot-sonar {
+        height: var(--hotspot-height-mb);
+        top: calc(-1 * var(--hotspot-height-mb) + 10px);
+      }
+    }
+    @media (max-width: 749px) {
+      .text-center.hotspot-heading {
+        text-align: left !important;
+      }
+      .hotspot-mobile .hotspot-content {
+        bottom: 290px;
+        width: 90vw;
+        top: -135px;
+        left: 50%;
+        transform: translatex(-50%);
+        text-align: center;
+      }
+      .hotspot-heading .h1 {
+        margin-bottom: 5px;
+      }
+    }
+  {% endstyle %}
+  <div
+    class="product-grid page-width"
+    data-section-id="{{ section.id }}"
+    {% if section.settings.enable_anchor_link %}
+      data-anchor-link="true"
+      data-anchor-link-text="{{ section.settings.anchor_link_text }}"
+      id="{{ section.settings.anchor_link_text | downcase |  replace: ' ', '-' }}"
+    {% endif %}
+    data-section-type="pf-hotspot-section"
+  >
+    <div class="section-heading">
+      <div class="text-center hotspot-heading">
+        {%- unless section.settings.heading == blank -%}
+          <div class="title-wrapper title-wrapper--no-top-margin">
+            <h2 class="text-2xl">{{ section.settings.heading }}</h2>
+          </div>
+        {%- endunless -%}
+
+        {% if section.settings.content != blank %}
+          <div class="">
+            <p>{{ section.settings.content }}</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="pf-image-hotspot-wrapper">
+      <hotspot-img>
+        <div class="pf-image-hotspot-hotspots">
+          {%- if section.settings.banner_image != blank -%}
+            {%- assign img_url = section.settings.banner_image | img_url: 'master' -%}
+          {%- else -%}
+            {%- assign img_url = '1100x825.png' | asset_url -%}
+          {%- endif -%}
+          <img
+            src="{{ img_url }}"
+            alt="{{ section.settings.heading }}"
+            class="lazyload pf-image-hotspot-img attachment-full {%if section.settings.banner_mobile != blank %} hidden-xs {% endif %}"
+            alt="{{section.settings.banner_image.alt | default: section.settings.heading }}"
+            width="{{section.settings.banner_image.width}}"
+            height="{{section.settings.banner_image.height}}"
+          >
+          {%- if section.settings.banner_mobile != blank -%}
+            <img
+              src="{{ section.settings.banner_mobile | img_url: 'master' }}"
+              alt="{{section.settings.banner_mobile.alt | default: section.settings.heading }}"
+              class="lazyload pf-image-hotspot-img attachment-full visible-xs"
+              width="{{section.settings.banner_mobile.width}}"
+              height="{{section.settings.banner_mobile.height}}"
+              style="margin-top:{{section.settings.margin-top | remove: 'px' | append: 'px' }}; margin-bottom:{{section.settings.margin-bottom | remove: 'px' | append: 'px' }}; "
+            >
+          {%- endif -%}
+          {%- if section.blocks.size > 0 -%}
+            {%- for block in section.blocks -%}
+              {% capture hotpost_content %}
+        <div class="hotspot-content{% if block.settings.direction == 'horizontal' %} horizontal{% endif %}"style="--hotspot-height:{{ block.settings.space }}px">
+          {%- if block.settings.hotspot_title != blank -%}
+          <h3 class="h3 primary-color hotspot-item__title">{{ block.settings.hotspot_title }}</h3>
+          {%- endif -%}
+          {%- if block.settings.hotspot_sub_title != blank -%}
+          <p class="hotspot-item__sub-title">{{ block.settings.hotspot_sub_title }}</p>
+          {%- endif -%}
+        </div>
+        {% endcapture %}
+              <div
+                class="pf-image-hotspot hotspot-type-product hidden-xs {{block.settings.direction}} {{block.settings.content_position}} {% if forloop.first == true %} active{% endif %}"
+                style="--hotspot-height:{{block.settings.space}}px;left: {{block.settings.left | remove: '%' | append: '%' }}; top: {{block.settings.top | remove: '%' | append: '%' }};"
+              >
+                <span class="hotspot-sonar"></span>
+                <div class="hotspot-btn">{{ forloop.index }}</div>
+                {%- if block.settings.hotspot_title != blank or block.settings.hotspot_sub_title != blank -%}
+                  <div class="hotspot-desktop hidden-xs">
+                    {{ hotpost_content }}
+                  </div>
+                {%- endif -%}
+              </div>
+              <div
+                class="pf-image-hotspot hotspot-type-product visible-xs{% if forloop.first == true %} active{% endif %}"
+                style="--hotspot-height-mb:{{block.settings.space_mb}}px; left: {{block.settings.left_mobile | remove: '%' | append: '%' }}; top: {{block.settings.top_mobile | remove: '%' | append: '%' }};"
+              >
+                <span class="hotspot-sonar"></span>
+                <div class="hotspot-btn">{{ forloop.index }}</div>
+              </div>
+              {%- if block.settings.hotspot_title != blank or block.settings.hotspot_sub_title != blank -%}
+                <div class="hotspot-mobile visible-xs">
+                  {{ hotpost_content }}
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+      </hotspot-img>
+    </div>
+  </div>
+
+  <script>
+    class HotsptImage extends HTMLElement {
+      constructor() {
+        super();
+        this.hotspot = this.querySelectorAll('.pf-image-hotspot');
+        this.hotspot.forEach((hotspot) => {
+          hotspot.addEventListener('click', this.toggleHotspot.bind(this));
+        });
+      }
+      toggleHotspot(e) {
+        this.hotspot.forEach((hotspot) => {
+          hotspot.classList.remove('active');
+        });
+        e.currentTarget.classList.add('active');
+      }
+    }
+
+    customElements.define('hotspot-img', HotsptImage);
+  </script>
+{% endif %}
+{% schema %}
+{
+  "name": "PaegFLy Hotspot 8",
+  "class": "product-hotspot-section index-section",
+  "max_blocks": 10,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_anchor_link",
+      "label": "t:sections.featured-product.settings.anchor_links.label__1",
+      "default": false,
+      "info": "t:sections.featured-product.settings.anchor_links.info"
+    },
+    {
+      "type": "text",
+      "id": "anchor_link_text",
+      "label": "t:sections.featured-product.settings.anchor_links.label__2",
+      "info": "Example: Product detail"
+    },
+    {
+      "type": "text",
+      "id": "productHandle",
+      "label": "Product Handle"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Product Features"
+    },
+    {
+      "type": "textarea",
+      "id": "content",
+      "label": "Content",
+      "default": " Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Bibendum est ultricies integer quis."
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_image",
+      "label": "Banner image"
+    },
+    {
+      "type": "header",
+      "content": "Mobile Settings"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_mobile",
+      "label": "Image Mobile"
+    },
+    {
+      "type": "text",
+      "id": "margin-top",
+      "label": "Margin Top",
+      "default": "0px"
+    },
+    {
+      "type": "text",
+      "id": "margin-bottom",
+      "label": "Margin Bottom",
+      "default": "0px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product Hotsport",
+      "settings": [
+        {
+          "type": "header",
+          "content": "General Settings"
+        },
+        {
+          "type": "text",
+          "id": "hotspot_title",
+          "label": "Hotspot Title",
+          "default": "Hotspot Title"
+        },
+        {
+          "type": "text",
+          "id": "hotspot_sub_title",
+          "label": "Hotspot Sub Title",
+          "default": "Hotspot Sub Title"
+        },
+        {
+          "type": "select",
+          "id": "direction",
+          "label": "Hotspot Direction",
+          "options": [
+            {
+              "value": "vertical",
+              "label": "vertical"
+            },
+            {
+              "value": "horizontal",
+              "label": "horizontal"
+            }
+          ],
+          "default": "vertical"
+        },
+        {
+          "type": "select",
+          "id": "content_position",
+          "label": "Hotspot Content Position",
+          "options": [
+            {
+              "value": "top",
+              "label": "top"
+            },
+            {
+              "value": "left",
+              "label": "left"
+            },
+            {
+              "value": "right",
+              "label": "right"
+            },
+            {
+              "value": "bottom",
+              "label": "bottom"
+            }
+          ],
+          "default": "right"
+        },
+        {
+          "type": "text",
+          "id": "space",
+          "label": "Space",
+          "default": "250"
+        },
+        {
+          "type": "text",
+          "id": "left",
+          "label": "Position Left",
+          "info": "Set position product on banner.",
+          "default": "30%"
+        },
+        {
+          "type": "text",
+          "id": "top",
+          "label": "Position Top",
+          "info": "Set position product on banner.",
+          "default": "30%"
+        },
+        {
+          "type": "header",
+          "content": "Mobile Settings"
+        },
+        {
+          "type": "text",
+          "id": "space_mb",
+          "label": "Space",
+          "default": "110"
+        },
+        {
+          "type": "text",
+          "id": "left_mobile",
+          "label": "Position Left",
+          "info": "Set position product on banner.",
+          "default": "30%"
+        },
+        {
+          "type": "text",
+          "id": "top_mobile",
+          "label": "Position Top",
+          "info": "Set position product on banner.",
+          "default": "30%"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Products Hotspot 8",
+      "category": "collection"
+    }
+  ]
+}
+{% endschema %}

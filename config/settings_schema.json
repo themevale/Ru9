@@ -1222,5 +1222,11 @@
         "label": "t:settings_schema.extras.settings.disable_animations.label"
       }
     ]
+  },
+  {
+    "name": "Blog Category tags",
+    "settings": [
+      { "type": "textarea", "id": "category_tag", "label": "Category tags" }
+    ]
   }
 ]

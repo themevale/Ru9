@@ -1,0 +1,138 @@
+<sticky-add-to-cart
+  class="product__sticky flex ai-center fixed z-index-10 pointer-none no-js-hidden"
+  id="product-sticky-{{ section.id }}-{{ product.id }}"
+  data-section="{{ section.id }}"
+>
+  <nav class="product__sticky-navigation shrink-0">
+    <div class="sticky-navigation__links flex ai-center gap-x"></div>
+  </nav>
+  <div class="product__stick-product-wrap flex ai-center gap-x-sm flex-1">
+    {%- liquid
+      assign product_media = product.media | where: 'media_type', 'image'
+      assign media_count = product_media | size
+      if media_count > 0
+        if product.selected_or_first_available_variant.image
+          assign image = product.selected_or_first_available_variant.image
+        else
+          assign image = product.featured_image.src
+        endif
+      endif
+      assign VariantPicker = section.blocks | where: 'type', 'variant_picker'
+      assign Buybuttons = section.blocks | where: 'type', 'buy_buttons'
+    -%}
+    <button
+      class="product__sticky-product border-none flex w-full relative p-0 bg-transparent shrink-0"
+      type="button"
+      aria-label="{{ product.title | escape }}"
+      data-toggle
+    >
+      {%- if media_count > 0 -%}
+        <div class="product__sticky-image w-full" id="MediaStickyAddToCart-{{ section.id }}">
+          <div
+            class="relative ovh grid__image-ratio rounded-sm ovh"
+            style="--padding-bottom: 100%;"
+          >
+            <img
+              srcset="{{ image | img_url: '110x' }}"
+              src="{{ image | img_url: '110x' }}"
+              alt="{{ image.alt | default: product.title | escape }}"
+              sizes="110"
+              loading="lazy"
+            >
+          </div>
+        </div>
+      {%- endif -%}
+      <div class="product__sticky-content pos-relative left f-1 hidden">
+        <div class="product__sticky-title link--text subrte">{{ product.title | escape }}</div>
+        <div
+          class="product__sticky-price p-t"
+          id="product-sticky-price-{{ section.id }}-{{ product.id }}"
+          style="--p-t: 1rem;"
+        >
+          {%- render 'price', product: product, use_variant: true, main_price: true, price_class: '' -%}
+        </div>
+      </div>
+      <div class="product__sticky-toggle pos-absolute pos-absolute-c-r d-block hidden">&nbsp;</div>
+    </button>
+    <div class="product__sticky-inner o-h flex-1">
+      <div class="product__sticky-wrapper flex gap-x-xs ai-center jc-between">
+        {%- if VariantPicker.size > 0 -%}
+          {% render 'product-variant-picker',
+            product: product,
+            block: VariantPicker.first,
+            is_sticky: true,
+            product_form_id: product_form_id
+          %}
+        {%- endif -%}
+        {%- if Buybuttons.size > 0 -%}
+          {%- liquid
+            assign product_form_id = product_form_id | append: '-duplicate'
+            assign block = Buybuttons.first
+            capture icon_spinner
+              render 'icon-spinner'
+            endcapture
+          -%}
+          {%- if product != blank -%}
+            <product-form class="product-form">
+              <div class="product-form__error-message-wrapper text-xs" role="alert" hidden>
+                <svg aria-hidden="true" focusable="false" class="icon icon-error" viewBox="0 0 13 13">
+                  <circle cx="6.5" cy="6.50049" r="5.5" stroke="white" stroke-width="2"/>
+                  <circle cx="6.5" cy="6.5" r="5.5" fill="#EB001B" stroke="#EB001B" stroke-width="0.7"/>
+                  <path d="M5.87413 3.52832L5.97439 7.57216H7.02713L7.12739 3.52832H5.87413ZM6.50076 9.66091C6.88091 9.66091 7.18169 9.37267 7.18169 9.00504C7.18169 8.63742 6.88091 8.34917 6.50076 8.34917C6.12061 8.34917 5.81982 8.63742 5.81982 9.00504C5.81982 9.37267 6.12061 9.66091 6.50076 9.66091Z" fill="white"/>
+                  <path d="M5.87413 3.17832H5.51535L5.52424 3.537L5.6245 7.58083L5.63296 7.92216H5.97439H7.02713H7.36856L7.37702 7.58083L7.47728 3.537L7.48617 3.17832H7.12739H5.87413ZM6.50076 10.0109C7.06121 10.0109 7.5317 9.57872 7.5317 9.00504C7.5317 8.43137 7.06121 7.99918 6.50076 7.99918C5.94031 7.99918 5.46982 8.43137 5.46982 9.00504C5.46982 9.57872 5.94031 10.0109 6.50076 10.0109Z" fill="white" stroke="#EB001B" stroke-width="0.7">
+                </svg>
+                <span class="product-form__error-message"></span>
+              </div>
+              {%- form 'product',
+                product,
+                id: product_form_id,
+                class: 'form',
+                novalidate: 'novalidate',
+                data-type: 'add-to-cart-form'
+              -%}
+                <input
+                  type="hidden"
+                  name="id"
+                  value="{{ product.selected_or_first_available_variant.id }}"
+                  disabled
+                  class="product-variant-id"
+                >
+                <div class="product-form__buttons d-block">
+                  {%- liquid
+                    assign check_against_inventory = true
+                    if product.selected_or_first_available_variant.inventory_management != 'shopify' or product.selected_or_first_available_variant.inventory_policy == 'continue'
+                      assign check_against_inventory = false
+                    endif
+                    if product.selected_or_first_available_variant.quantity_rule.min > product.selected_or_first_available_variant.inventory_quantity and check_against_inventory
+                      assign quantity_rule_soldout = true
+                    endif
+                  -%}
+                  <button
+                    id="ProductSubmitButton-{{ section_id }}-duplicate"
+                    type="submit"
+                    name="add"
+                    class="product-form__submit button btn btn--secondary w-full"
+                    {% if product.selected_or_first_available_variant.available == false or quantity_rule_soldout %}
+                      disabled
+                    {% endif %}
+                  >
+                    {% render 'icon-cart-2' %}
+                    <span class="text-wrap">
+                      {%- if product.selected_or_first_available_variant.available == false or quantity_rule_soldout -%}
+                        {{ 'products.product.sold_out' | t }}
+                      {%- else -%}
+                        {{ 'products.product.sticky_add_to_cart' | t }}
+                      {%- endif -%}
+                    </span>
+                    <div class="loading__spinner d-inline-block z-index-2 hidden">{{ icon_spinner }}</div>
+                  </button>
+                </div>
+              {%- endform -%}
+            </product-form>
+          {%- else -%}
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</sticky-add-to-cart>

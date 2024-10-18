@@ -1,0 +1,8 @@
+{%- for tag in article.tags -%}
+  {%- assign temptTag = tag | handle -%}
+  {%- assign categories = settings.category_tag | handle -%}
+  {%- if categories contains temptTag -%}
+    <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="tag-item i-block {{ tag | handle }}">{{ tag }}</a>
+    {%- break -%}
+  {%- endif -%}
+{%- endfor -%}

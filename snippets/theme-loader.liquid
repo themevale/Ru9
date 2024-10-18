@@ -1,0 +1,14 @@
+<script>
+    ThemeDefer.push(() => {
+        {%- for file in files -%}
+            {%- assign fileId = file | replace: ".js", "-js" | strip | append: "-file" -%}
+            {%- assign fileName = fileId | replace: "-", "_" -%}
+            if (!document.querySelector(`#{{ fileId }}`)) {
+                let {{ fileName }} = document.createElement('script');
+                {{ fileName }}.setAttribute('src', `{{ file | asset_url }}`);
+                {{ fileName }}.setAttribute('id', '{{ fileId }}');
+                document.body.appendChild({{ fileName }});
+            }
+        {%- endfor -%}
+    });
+</script>

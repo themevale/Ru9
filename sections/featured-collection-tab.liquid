@@ -32,7 +32,7 @@
                   <span
                     class="btn tab__item-panel"
                     id="Tab-{{ block.id }}"
-                    style="--colorBtnPrimaryText: {{ block.settings.color_tab_name }}; --colorBtnPrimary: {{ block.settings.background_tab_name }};--background-inactive: {{ block.settings.background_tab_name | color_modify: "alpha", 0.3 }};"
+                    style="--colorBtnPrimaryText: {{ section.settings.color_tab_name }}; --colorBtnPrimary: {{ section.settings.background_tab_name }};--background-inactive: {{ section.settings.background_tab_name_inactive }};"
                   >
                     {{ block.settings.tab_name }}
                     {%- if block.settings.tab_label != blank -%}
@@ -78,6 +78,7 @@
                       custom_color_label_right: color_labels_right,
                       custom_background_label_right: background_labels_right,
                       per_row: 3,
+                      type: 'horizontal',
                       quick_shop_enable: settings.quick_shop_enable
                     -%}
                   {%- endif -%}
@@ -122,9 +123,9 @@
     {
       "type": "range",
       "id": "customize_width",
-      "min": 1000,
+      "min": 1005,
       "max": 1800,
-      "step": 10,
+      "step": 15,
       "default": 1800,
       "unit": "px",
       "label": "t:sections.all.customize_width.label"
@@ -140,6 +141,24 @@
       "id": "description",
       "label": "t:sections.all.description.label",
       "default": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>"
+    },
+    {
+      "type": "color",
+      "id": "color_tab_name",
+      "label": "t:sections.featured-collection-tab.blocks.tab.colors.label__1",
+      "default": "#fff"
+    },
+    {
+      "type": "color",
+      "id": "background_tab_name",
+      "label": "t:sections.featured-collection-tab.blocks.tab.colors.label__2",
+      "default": "#2960AD"
+    },
+    {
+      "type": "color",
+      "id": "background_tab_name_inactive",
+      "label": "t:sections.featured-collection-tab.blocks.tab.colors.label__3",
+      "default": "#DDEBFC"
     }
   ],
   "blocks": [
@@ -153,18 +172,6 @@
           "id": "tab_name",
           "default": "Tab name",
           "label": "t:sections.all.tab_name.label"
-        },
-        {
-          "type": "color",
-          "id": "color_tab_name",
-          "label": "t:sections.featured-collection-tab.blocks.tab.colors.label__1",
-          "default": "#fff"
-        },
-        {
-          "type": "color",
-          "id": "background_tab_name",
-          "label": "t:sections.featured-collection-tab.blocks.tab.colors.label__2",
-          "default": "#2960AD"
         },
         {
           "type": "text",

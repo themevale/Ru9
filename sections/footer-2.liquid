@@ -1,5 +1,11 @@
 {{ 'footer.css' | asset_url | stylesheet_tag: preload: true }}
-<div class="footer-container relative">
+{%- style -%}
+  .template-product .footer-{{ section.id }} {
+        position: relative;
+    z-index: 10;
+  }
+{%- endstyle -%}
+<div class="footer-container relative footer-{{ section.id }}">
   <div class="footer-content w-full relative page-width">
     <div class="footer-copyright__image">
       {%- capture sizes -%}{{ section.settings.footer_logo.width }}px{%- endcapture -%}
